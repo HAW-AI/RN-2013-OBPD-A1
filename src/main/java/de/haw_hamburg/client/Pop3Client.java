@@ -32,7 +32,7 @@ public class Pop3Client extends Thread {
 	private void connect() {
 		try {
 			socket = new Socket(account.getPop3Server(), account.getPop3Port());
-			state = state.CONNECTED;
+			state = State.CONNECTED;
 			out = new PrintWriter(socket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
