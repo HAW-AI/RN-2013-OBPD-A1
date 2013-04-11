@@ -238,6 +238,10 @@ public class AccountType {
             }
             return this.message;
         }
+        
+        public void setMessage(List<MessageType> message){
+            this.message=message;            
+        }
 
     }
 

@@ -25,11 +25,11 @@ public class Pop3Client extends Thread {
 		this.account = account;
 	}
 
-	public Pop3Client create(AccountType account) {
+	public static Pop3Client create(AccountType account) {
 		return new Pop3Client(account);
 	}
 
-	private void connect() {
+	protected void connect() {
 		try {
 			socket = new Socket(account.getPop3Server(), account.getPop3Port());
 			state = State.CONNECTED;
@@ -45,7 +45,7 @@ public class Pop3Client extends Thread {
 		}
 	}
 
-	private void login() {
+	protected void login() {
 		if (state != State.CONNECTED)
 			throw new IllegalStateException("Expected CONNECTED. was"
 					+ state.toString());
@@ -68,13 +68,17 @@ public class Pop3Client extends Thread {
 		String response = in.readLine();
 		return response != null && response.startsWith(Replies.ok());
 	}
+	
+	protected Pop3Client.State getClientState(){
+	    return state;
+	}
 
 	public void run() {
 		connect();
 		login();
 	}
 
-	private enum State {
+	public enum State {
 		AUTHORIZATION, CONNECTED, TRANSACTION, UPDATE, IDLE;
 
 		public String toString() {

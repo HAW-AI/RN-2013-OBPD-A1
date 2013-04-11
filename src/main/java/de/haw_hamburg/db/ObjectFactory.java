@@ -8,6 +8,8 @@
 
 package de.haw_hamburg.db;
 
+import java.util.ArrayList;
+
 import javax.xml.bind.annotation.XmlRegistry;
 
 
@@ -33,39 +35,24 @@ public class ObjectFactory {
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.haw_hamburg.db
      * 
      */
-    public ObjectFactory() {
+    private ObjectFactory() {
     }
+
 
     /**
      * Create an instance of {@link AccountType }
      * 
      */
-    public AccountType createAccountType() {
-        return new AccountType();
-    }
-
-    /**
-     * Create an instance of {@link Database }
-     * 
-     */
-    public Database createDatabase() {
-        return new Database();
-    }
-
-    /**
-     * Create an instance of {@link MessageType }
-     * 
-     */
-    public MessageType createMessageType() {
-        return new MessageType();
-    }
-
-    /**
-     * Create an instance of {@link AccountType.Messages }
-     * 
-     */
-    public AccountType.Messages createAccountTypeMessages() {
-        return new AccountType.Messages();
+    public static AccountType createAccountType(String name,String password,String pop3server,int pop3port) {
+        AccountType result=new AccountType();
+        result.setName(name);
+        result.setPassword(password);
+        result.setPop3Server(pop3server);
+        result.setPop3Port(pop3port);
+        AccountType.Messages messages=new AccountType.Messages();
+        messages.setMessage(new ArrayList<MessageType>());
+        result.setMessages(messages);
+        return result; 
     }
 
 }
