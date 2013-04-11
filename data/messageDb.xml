@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="messageDb.xsd">
+	<account>
+		<name></name>
+		<password></password>
+		<pop3server></pop3server>
+		<pop3port></pop3port>
+		<messages></messages>
+	</account>
+</database>

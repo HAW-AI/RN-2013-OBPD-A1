@@ -6,6 +6,7 @@
 			<xsd:element name="name" type="xsd:string" />
 			<xsd:element name="password" type="xsd:string" />
 			<xsd:element name="pop3server" type="xsd:string" />
+			<xsd:element name="pop3port" type="xsd:int" />
 			<xsd:element name="messages">
 				<xsd:complexType>
 					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
