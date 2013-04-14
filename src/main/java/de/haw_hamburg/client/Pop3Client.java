@@ -37,18 +37,25 @@ public class Pop3Client extends Thread {
 			in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	protected void disconnect() {
+		try {
+			socket.close();
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		state = State.IDLE;
+		out.close();
+	}
+
 	protected void login() {
-		if (state != State.CONNECTED)
-			throw new IllegalStateException("Expected CONNECTED. was"
-					+ state.toString());
+		ensureCorrectState(State.CONNECTED);
 		try {
 			if (isOk() && sendAndWait(user(account.getName()))
 					&& sendAndWait(pass(account.getPassword()))) {
@@ -57,6 +64,23 @@ public class Pop3Client extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected void quit() {
+		ensureCorrectState(State.AUTHORIZATION);
+		try {
+			sendAndWait(Requests.quit());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		disconnect();
+	}
+
+	private void ensureCorrectState(State expectedState) {
+		if (state != expectedState)
+			throw new IllegalStateException(
+					"Expected " + expectedState.toString() +
+					". was" + state.toString());
 	}
 
 	private boolean sendAndWait(String command) throws IOException {

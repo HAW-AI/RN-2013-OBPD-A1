@@ -40,6 +40,18 @@ public class Pop3ClientTest {
         assertEquals(Pop3Client.State.AUTHORIZATION,client.getClientState());
     }
     
+    @Test
+    public void testQuit() {
+    	AccountType account=ObjectFactory.createAccountType("waelc", "soooosecret", "localhost", 3110);
+        Pop3Client client=Pop3Client.create(account);
+        client.connect();
+        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        client.login();
+        assertEquals(Pop3Client.State.AUTHORIZATION, client.getClientState());
+        client.quit();
+        assertEquals(Pop3Client.State.IDLE, client.getClientState());
+    }
+    
     @After
     public void tearDown() throws Exception {
         if (null!=greenMail) {
