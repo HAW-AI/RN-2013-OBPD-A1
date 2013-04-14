@@ -10,7 +10,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import de.haw_hamburg.db.AccountType;
+import de.haw_hamburg.server.OkReply;
 import de.haw_hamburg.server.Replies;
+import de.haw_hamburg.server.Reply;
 
 public class Pop3Client extends Thread {
 
@@ -20,6 +22,9 @@ public class Pop3Client extends Thread {
 	private BufferedReader in;
 	private AccountType account;
 	private Socket socket;
+
+	private Integer numberOfMessagesInMaildrop;
+	private Integer sizeOfMaildropInOctets;
 
 	private Pop3Client(AccountType account) {
 		this.account = account;
@@ -57,23 +62,34 @@ public class Pop3Client extends Thread {
 	protected void login() {
 		ensureCorrectState(State.CONNECTED);
 		try {
-			if (isOk() && sendAndWait(user(account.getName()))
-					&& sendAndWait(pass(account.getPassword()))) {
+			if (isOk() && sendAndWaitForOk(user(account.getName()))
+					&& sendAndWaitForOk(pass(account.getPassword()))) {
 				state = State.AUTHORIZATION;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected void quit() {
 		ensureCorrectState(State.AUTHORIZATION);
 		try {
-			sendAndWait(Requests.quit());
+			sendAndWaitForOk(Requests.quit());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		disconnect();
+	}
+
+	protected void stat() {
+		ensureCorrectState(State.TRANSACTION);
+		try {
+			OkReply reply = (OkReply) sendAndWaitForOkAndParams(Requests.stat());
+			numberOfMessagesInMaildrop = Integer.parseInt(reply.getParams().split(" ")[0]);
+			sizeOfMaildropInOctets = Integer.parseInt(reply.getParams().split(" ")[1]);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void ensureCorrectState(State expectedState) {
@@ -83,18 +99,42 @@ public class Pop3Client extends Thread {
 					". was" + state.toString());
 	}
 
-	private boolean sendAndWait(String command) throws IOException {
+	private boolean sendAndWaitForOk(String command) throws IOException {
 		out.println(command);
 		return isOk();
 	}
 
+	private Reply sendAndWaitForOkAndParams(String command) throws IOException {
+		out.println(command);
+		return OkWithParams();
+	}
+
+	private Reply OkWithParams() {
+		String response = null;
+		try {
+			response = in.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Replies.replyFromString(response);
+	}
+
 	private boolean isOk() throws IOException {
 		String response = in.readLine();
-		return response != null && response.startsWith(Replies.ok());
+		Reply reply = Replies.replyFromString(response);
+		return OkReply.class.isInstance(reply);
 	}
-	
+
 	protected Pop3Client.State getClientState(){
 	    return state;
+	}
+
+	protected Integer getNumberOfMessagesInMaildrop() {
+		return this.numberOfMessagesInMaildrop;
+	}
+
+	protected Integer getSizeOfMaildropInOctets() {
+		return this.sizeOfMaildropInOctets;
 	}
 
 	public void run() {

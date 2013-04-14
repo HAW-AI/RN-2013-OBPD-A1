@@ -52,6 +52,20 @@ public class Pop3ClientTest {
         assertEquals(Pop3Client.State.IDLE, client.getClientState());
     }
     
+    @Test
+    public void testStat() {
+    	AccountType account=ObjectFactory.createAccountType("waelc", "soooosecret", "localhost", 3110);
+        Pop3Client client=Pop3Client.create(account);
+        client.connect();
+        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        client.login();
+        assertEquals(Pop3Client.State.AUTHORIZATION, client.getClientState());
+        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        client.stat();
+        assertTrue("Message count must be greater than zero", client.getNumberOfMessagesInMaildrop() > 0);
+        assertTrue("Size of Maildrop must be larger than zero", client.getSizeOfMaildropInOctets() > 0);
+    }
+    
     @After
     public void tearDown() throws Exception {
         if (null!=greenMail) {
