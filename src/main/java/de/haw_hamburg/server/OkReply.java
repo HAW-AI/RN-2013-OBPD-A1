@@ -1,7 +1,7 @@
 package de.haw_hamburg.server;
 
 public class OkReply implements Reply {
-	String params;
+	String params = "";
 
 	private OkReply() {}
 	private OkReply(String params) {
@@ -21,5 +21,9 @@ public class OkReply implements Reply {
 	
 	public String getParams() {
 		return this.params;
+	}
+
+	public String toString() {
+		return (okString() + " " + params).trim();
 	}
 }

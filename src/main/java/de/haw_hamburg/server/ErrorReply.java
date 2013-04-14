@@ -1,7 +1,7 @@
 package de.haw_hamburg.server;
 
 public class ErrorReply implements Reply {
-	String errorMessage;
+	String errorMessage = "";
 
 	private ErrorReply() {}
 	private ErrorReply(String errorMessage) {
@@ -17,5 +17,9 @@ public class ErrorReply implements Reply {
 	}
 	public static String errorString() {
 		return "-ERR";
-	}	
+	}
+
+	public String toString() {
+		return (errorString() + " " + errorMessage).trim();
+	}
 }
