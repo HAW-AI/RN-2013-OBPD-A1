@@ -1,7 +1,5 @@
 package de.haw_hamburg.client;
 
-import static de.haw_hamburg.client.Requests.*;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -59,13 +57,42 @@ public class Pop3Client extends Thread {
 		out.close();
 	}
 
+	// FIXME
 	protected void login() {
 		ensureCorrectState(State.CONNECTED);
 		try {
-			if (isOk() && sendAndWaitForOk(user(account.getName()))
-					&& sendAndWaitForOk(pass(account.getPassword()))) {
+			if (isOk() && sendAndWaitForOk(Requests.user(account.getName()))
+					&& sendAndWaitForOk(Requests.pass(account.getPassword()))) {
 				state = State.AUTHORIZATION;
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// This seems more like what is happening according to the spec
+	protected void login2() {
+		ensureCorrectState(State.CONNECTED);
+		state = State.AUTHORIZATION;
+		user();
+		pass();
+		state = State.TRANSACTION;
+	}
+
+	private void user() {
+		ensureCorrectState(State.AUTHORIZATION);
+		try {
+			isOk();
+			sendAndWaitForOk(Requests.user(account.getName()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void pass() {
+		ensureCorrectState(State.AUTHORIZATION);
+		try {
+			sendAndWaitForOk(Requests.pass(account.getPassword()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -85,18 +112,77 @@ public class Pop3Client extends Thread {
 		ensureCorrectState(State.TRANSACTION);
 		try {
 			OkReply reply = (OkReply) sendAndWaitForOkAndParams(Requests.stat());
-			numberOfMessagesInMaildrop = Integer.parseInt(reply.getParams().split(" ")[0]);
-			sizeOfMaildropInOctets = Integer.parseInt(reply.getParams().split(" ")[1]);
+			numberOfMessagesInMaildrop = Integer.parseInt(reply.getParams()
+					.split(" ")[0]);
+			sizeOfMaildropInOctets = Integer.parseInt(reply.getParams().split(
+					" ")[1]);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	protected void list() {
+		ensureCorrectState(State.TRANSACTION);
+		// TODO
+	}
+
+	protected void list(Integer messageNumber) {
+		ensureCorrectState(State.TRANSACTION);
+		ensureMessageNotMarkedAsDeleted(messageNumber);
+		// TODO
+	}
+
+	protected void retr(Integer messageNumber) {
+		ensureCorrectState(State.TRANSACTION);
+		ensureMessageNotMarkedAsDeleted(messageNumber);
+		// TODO
+	}
+
+	protected void dele(Integer messageNumber) {
+		ensureCorrectState(State.TRANSACTION);
+		ensureMessageNotMarkedAsDeleted(messageNumber);
+		// TODO
+	}
+
+	protected void noop() {
+		ensureCorrectState(State.TRANSACTION);
+		try {
+			sendAndWaitForOk(Requests.noop());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// TODO
+	}
+
+	protected void rset() {
+		ensureCorrectState(State.TRANSACTION);
+		try {
+			sendAndWaitForOk(Requests.reset());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// TODO
+	}
+
+	protected void uidl() {
+		ensureCorrectState(State.TRANSACTION);
+		// TODO
+	}
+
+	protected void uidl(Integer messageNumber) {
+		ensureCorrectState(State.TRANSACTION);
+		ensureMessageNotMarkedAsDeleted(messageNumber);
+		// TODO
+	}
+
+	private void ensureMessageNotMarkedAsDeleted(Integer messageNumber) {
+		// TODO
+	}
+
 	private void ensureCorrectState(State expectedState) {
 		if (state != expectedState)
-			throw new IllegalStateException(
-					"Expected " + expectedState.toString() +
-					". was" + state.toString());
+			throw new IllegalStateException("Expected "
+					+ expectedState.toString() + ". was" + state.toString());
 	}
 
 	private boolean sendAndWaitForOk(String command) throws IOException {
@@ -125,8 +211,8 @@ public class Pop3Client extends Thread {
 		return OkReply.class.isInstance(reply);
 	}
 
-	protected Pop3Client.State getClientState(){
-	    return state;
+	protected Pop3Client.State getClientState() {
+		return state;
 	}
 
 	protected Integer getNumberOfMessagesInMaildrop() {
