@@ -43,8 +43,10 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class MessageType {
 
+
     protected long id;
-    @XmlElement(required = true)
+    
+	//@XmlElement(required = true)
     protected String uid;
     @XmlElement(required = true)
     protected String content;

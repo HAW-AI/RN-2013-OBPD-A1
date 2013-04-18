@@ -22,4 +22,10 @@ public class ErrorReply implements Reply {
 	public String toString() {
 		return (errorString() + " " + errorMessage).trim();
 	}
+	public boolean isOk() {
+		return false;
+	}
+	public boolean isError() {
+		return true;
+	}
 }

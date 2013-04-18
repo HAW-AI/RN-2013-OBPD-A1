@@ -30,9 +30,7 @@ public class Replies {
 			if (cleanedReplyString.endsWith(OkReply.okString())) {
 				return ok();
 			} else {
-				Matcher matcher = Pattern.compile(OkReply.okString()).matcher(cleanedReplyString);
-				matcher.find();
-				return ok(matcher.group());
+				return ok(cleanedReplyString.substring(OkReply.okString().length(),cleanedReplyString.length()));
 			}
 		} else {
 			if (cleanedReplyString.endsWith(ErrorReply.errorString())) {

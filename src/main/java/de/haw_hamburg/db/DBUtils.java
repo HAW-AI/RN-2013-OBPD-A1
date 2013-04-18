@@ -14,7 +14,7 @@ import javax.xml.bind.Unmarshaller;
 public class DBUtils {
 	
 	private static final String JAXBCONTEXT = "de.haw_hamburg.db";
-	private static final String DATABASE_PATH = "data/messageDb.xml";
+	private static final String DATABASE_PATH = "messageDb.xml";
 	
 	private static Database getDatabase() throws JAXBException{
 		JAXBContext context = JAXBContext.newInstance(JAXBCONTEXT);
@@ -57,6 +57,14 @@ public class DBUtils {
                 new Boolean(true));
         marshaller.marshal(db, new FileOutputStream(DATABASE_PATH));
     }
+
+	public static void saveMessage(AccountType account, String content,int id) throws FileNotFoundException, JAXBException {
+		MessageType newMessage=new MessageType();
+		newMessage.setId(id);
+		newMessage.setContent(content);
+		account.getMessages().getMessage().add(newMessage);
+		saveAccount(account);
+	}
     
     
 

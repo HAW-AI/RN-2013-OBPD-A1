@@ -53,8 +53,8 @@ public class Requests {
 		return "UIDL";
 	}
 	
-	public static String uniqueIdListing(int uniqueMessageNumber){
-		return "UIDL " + uniqueMessageNumber;
+	public static String uniqueIdListing(int messageNumber){
+		return "UIDL " + messageNumber;
 	} 
 	
 }

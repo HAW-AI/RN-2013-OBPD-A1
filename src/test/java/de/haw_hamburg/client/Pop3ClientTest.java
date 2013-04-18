@@ -36,8 +36,8 @@ public class Pop3ClientTest {
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED,client.getClientState());
-        client.login();
-        assertEquals(Pop3Client.State.AUTHORIZATION,client.getClientState());
+        client.login2();
+        assertEquals(Pop3Client.State.TRANSACTION,client.getClientState());
     }
     
     @Test
@@ -46,8 +46,8 @@ public class Pop3ClientTest {
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
-        client.login();
-        assertEquals(Pop3Client.State.AUTHORIZATION, client.getClientState());
+        client.login2();
+        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
         client.quit();
         assertEquals(Pop3Client.State.IDLE, client.getClientState());
     }
@@ -58,8 +58,7 @@ public class Pop3ClientTest {
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
-        client.login();
-        assertEquals(Pop3Client.State.AUTHORIZATION, client.getClientState());
+        client.login2();
         assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
         client.stat();
         assertTrue("Message count must be greater than zero", client.getNumberOfMessagesInMaildrop() > 0);

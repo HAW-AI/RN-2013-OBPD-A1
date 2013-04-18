@@ -1,5 +1,7 @@
 package de.haw_hamburg.server;
 
+import java.util.regex.Pattern;
+
 public class OkReply implements Reply {
 	String params = "";
 
@@ -15,15 +17,25 @@ public class OkReply implements Reply {
 	public static OkReply okReply(String params) {
 		return new OkReply(params.trim());
 	}
+	public static String okRegex() {
+		return Pattern.quote(okString());
+	}
 	public static String okString() {
 		return "+OK";
 	}
+	
 	
 	public String getParams() {
 		return this.params;
 	}
 
 	public String toString() {
-		return (okString() + " " + params).trim();
+		return (okRegex() + " " + params).trim();
+	}
+	public boolean isOk() {
+		return true;
+	}
+	public boolean isError() {
+		return false;
 	}
 }
