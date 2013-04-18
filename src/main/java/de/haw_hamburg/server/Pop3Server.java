@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.haw_hamburg.client.DeleteRequest;
 import de.haw_hamburg.client.NoopRequest;
@@ -22,11 +24,13 @@ import de.haw_hamburg.common.Pop3Component;
 import de.haw_hamburg.common.Pop3State;
 
 public class Pop3Server extends Pop3Component {
+	private Set<Integer> markedAsDeleted;
 
 	private Pop3Server(BufferedReader in, PrintWriter out) {
 		this.in = in;
 		this.out = out;
 		this.state = Pop3State.CONNECTED;
+		this.markedAsDeleted = new HashSet<Integer>();
 	}
 
 	public Pop3Server create(Socket socket) throws IOException {
@@ -63,8 +67,11 @@ public class Pop3Server extends Pop3Component {
 		} else if (request.isDelete()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			// mark message as deleted unless it has been marked as such already
-			// send ok if marked as deleted
-			// send err if message not found or already marked
+			if (markMessageForDeletion(Integer.parseInt(request.param()))) {
+				// send ok if marked as deleted
+			} else {
+				// send err if message not found or already marked
+			}
 		} else if (request.isUidl()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			// differentiate between simple and complex somehow
@@ -94,6 +101,18 @@ public class Pop3Server extends Pop3Component {
 			// send ok with number of messages in maildrop and number of bytes
 		} else {
 			// FIXME Log error
+		}
+	}
+
+	private boolean isMessageMarkedForDeletion(Integer messageNumber) {
+		return markedAsDeleted.contains(messageNumber);
+	}
+
+	private boolean markMessageForDeletion(Integer messageNumber) {
+		if (isMessageMarkedForDeletion(messageNumber)) {
+			return false;
+		} else {
+			return markedAsDeleted.add(messageNumber);
 		}
 	}
 
