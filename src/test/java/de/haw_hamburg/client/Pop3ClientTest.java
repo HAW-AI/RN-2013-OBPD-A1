@@ -24,6 +24,7 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
+import de.haw_hamburg.common.Pop3State;
 import de.haw_hamburg.db.AccountType;
 import de.haw_hamburg.db.DBUtils;
 import de.haw_hamburg.db.ObjectFactory;
@@ -54,9 +55,9 @@ public class Pop3ClientTest {
         AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED,client.getClientState());
+        assertEquals(Pop3State.CONNECTED,client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION,client.getClientState());
+        assertEquals(Pop3State.TRANSACTION,client.getPop3State());
     }
     
     @Test
@@ -64,11 +65,11 @@ public class Pop3ClientTest {
     	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.quit();
-        assertEquals(Pop3Client.State.IDLE, client.getClientState());
+        assertEquals(Pop3State.IDLE, client.getPop3State());
     }
     
     @Test
@@ -76,9 +77,9 @@ public class Pop3ClientTest {
     	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.stat();
         assertTrue("Message count must be greater than zero", client.getNumberOfMessagesInMaildrop() > 0);
         //assertTrue("Size of Maildrop must be larger than zero", client.getSizeOfMaildropInOctets() > 0);
@@ -89,9 +90,9 @@ public class Pop3ClientTest {
     	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.list();
         assertEquals(2,client.getMessageInfo().size());
         client.quit();
@@ -102,9 +103,9 @@ public class Pop3ClientTest {
     	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.list(1);
         assertEquals(1,client.getMessageInfo().size());
         client.list(2);
@@ -117,17 +118,17 @@ public class Pop3ClientTest {
     	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.retr(1);
         client.quit();
         assertEquals(1,DBUtils.getAccountForName("waelc").getMessages().getMessage().size());
         client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.retr(2);
         client.quit();
         assertEquals(2,DBUtils.getAccountForName("waelc").getMessages().getMessage().size());
@@ -138,18 +139,18 @@ public class Pop3ClientTest {
         AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.list();
         assertEquals(2,client.getMessageInfo().size());
         client.dele(1);
         client.quit();
         client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.list();
         assertEquals(1,client.getMessageInfo().size());
         client.quit();      
@@ -160,9 +161,9 @@ public class Pop3ClientTest {
         AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.list();
         assertEquals(2,client.getMessageInfo().size());
         client.dele(1);
@@ -170,9 +171,9 @@ public class Pop3ClientTest {
         client.quit();
         client=Pop3Client.create(account);
         client.connect();
-        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        assertEquals(Pop3State.CONNECTED, client.getPop3State());
         client.login();
-        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        assertEquals(Pop3State.TRANSACTION, client.getPop3State());
         client.list();
         assertEquals(2,client.getMessageInfo().size());
         client.quit();   

@@ -21,8 +21,7 @@ public class DBUtils {
     private static Database getDatabase() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(JAXBCONTEXT);
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        return (Database) unmarshaller
-                .unmarshal(new File(DATABASE_PATH));
+        return (Database) unmarshaller.unmarshal(new File(DATABASE_PATH));
     }
 
     public static List<AccountType> getAccounts() throws JAXBException {
@@ -62,11 +61,14 @@ public class DBUtils {
         marshaller.marshal(db, new FileOutputStream(DATABASE_PATH));
     }
 
-    public static void saveMessage(AccountType account, String content, int id)
-            throws FileNotFoundException, JAXBException {
+    public static void saveMessage(AccountType account, String content, int id,
+            String uid) throws FileNotFoundException, JAXBException {
         MessageType newMessage = new MessageType();
         newMessage.setId(id);
         newMessage.setContent(content);
+        if (uid != null) {
+            newMessage.setUid(uid);
+        }
         newMessage.setProxyuid(UUID.randomUUID().toString());
         account.getMessages().getMessage().add(newMessage);
         saveAccount(account);
@@ -84,7 +86,7 @@ public class DBUtils {
         result.setPop3Server(pop3server);
         result.setPop3Port(pop3port);
         MessagesType messages = new MessagesType();
-        messages.message=new ArrayList<MessageType>();
+        messages.message = new ArrayList<MessageType>();
         result.setMessages(messages);
         return result;
     }
