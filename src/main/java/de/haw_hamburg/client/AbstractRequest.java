@@ -2,75 +2,63 @@ package de.haw_hamburg.client;
 
 abstract class AbstractRequest implements Request {
 
-    @Override
-    public boolean isList() {
-        return false;
-    }
+	public boolean isList() {
+		return false;
+	}
 
-    @Override
-    public boolean isUidl() {
-        return false;
-    }
+	public boolean isUidl() {
+		return false;
+	}
 
-    @Override
-    public boolean isNoop() {
-        return false;
-    }
+	public boolean isNoop() {
+		return false;
+	}
 
-    @Override
-    public boolean isPass() {
-        return false;
-    }
+	public boolean isPass() {
+		return false;
+	}
 
-    @Override
-    public boolean isUser() {
-        return false;
-    }
+	public boolean isUser() {
+		return false;
+	}
 
-    @Override
-    public boolean isUnknown() {
-        return false;
-    }
+	public boolean isUnknown() {
+		return false;
+	}
 
-    @Override
-    public boolean isStat() {
-        return false;
-    }
+	public boolean isStat() {
+		return false;
+	}
 
-    @Override
-    public boolean isRetrieve() {
-        return false;
-    }
+	public boolean isRetrieve() {
+		return false;
+	}
 
-    @Override
-    public boolean isDelete() {
-        return false;
-    }
+	public boolean isDelete() {
+		return false;
+	}
 
-    @Override
-    public boolean isReset() {
-        return false;
-    }
+	public boolean isReset() {
+		return false;
+	}
 
-    @Override
-    public boolean isQuit() {
-        return false;
-    }
-    @Override
-    public boolean hasParam(){
-        return false;
-    }
-    
-    protected abstract String name();
-    
-    @Override
-    public String param(){
-        return null;
-    }
-    
-    @Override
-    public String toString(){
-        return name() + (hasParam() ? " "+param() : "");
-    }
+	public boolean isQuit() {
+		return false;
+	}
+
+	public boolean hasParam() {
+		return false;
+	}
+
+	protected abstract String name();
+
+	public String param() {
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return name() + (hasParam() ? " " + param() : "");
+	}
 
 }
