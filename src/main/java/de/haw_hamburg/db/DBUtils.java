@@ -14,7 +14,7 @@ import javax.xml.bind.Unmarshaller;
 public class DBUtils {
 	
 	private static final String JAXBCONTEXT = "de.haw_hamburg.db";
-	private static final String DATABASE_PATH = "messageDb.xml";
+	private static final String DATABASE_PATH = "src/main/resources/messageDb.xml";
 	
 	private static Database getDatabase() throws JAXBException{
 		JAXBContext context = JAXBContext.newInstance(JAXBCONTEXT);

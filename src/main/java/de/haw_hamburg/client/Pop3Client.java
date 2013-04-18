@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
-import de.haw_hamburg.Starter;
 import de.haw_hamburg.db.AccountType;
 import de.haw_hamburg.db.DBUtils;
 import de.haw_hamburg.server.OkReply;
@@ -46,6 +45,10 @@ public class Pop3Client extends Thread {
 	public static Pop3Client create(AccountType account) {
 		return new Pop3Client(account);
 	}
+	
+	public Map<Integer, Integer> getMessageInfo() {
+		return messageInfo;
+	}
 
 	protected void connect() {
 		try {
@@ -72,21 +75,7 @@ public class Pop3Client extends Thread {
 		out.close();
 	}
 
-	// FIXME
 	protected void login() {
-		ensureCorrectState(State.CONNECTED);
-		try {
-			if (isOk() && sendAndWaitForOk(Requests.user(account.getName()))
-					&& sendAndWaitForOk(Requests.pass(account.getPassword()))) {
-				state = State.AUTHORIZATION;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	// This seems more like what is happening according to the spec
-	protected void login2() {
 		ensureCorrectState(State.CONNECTED);
 		state = State.AUTHORIZATION;
 		user();
@@ -131,9 +120,12 @@ public class Pop3Client extends Thread {
 		try {
 			OkReply reply = (OkReply) sendAndWaitForOkAndParams(Requests.stat());
 			numberOfMessagesInMaildrop = Integer.parseInt(reply.getParams()
-					.split(" ")[0]);
+					.split("\\s")[0]);
 			sizeOfMaildropInOctets = Integer.parseInt(reply.getParams().split(
-					" ")[1]);
+					"\\s")[1]);
+			System.out.println(numberOfMessagesInMaildrop);
+			System.out.println(sizeOfMaildropInOctets);
+			System.out.println("\""+reply+"\"");
 		} catch (IOException e) {
 			logError("Failed to get stat", e);
 			e.printStackTrace();
