@@ -123,8 +123,61 @@ public class Pop3ClientTest {
         client.retr(1);
         client.quit();
         assertEquals(1,DBUtils.getAccountForName("waelc").getMessages().getMessage().size());
+        client=Pop3Client.create(account);
+        client.connect();
+        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        client.login();
+        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        client.retr(2);
+        client.quit();
+        assertEquals(2,DBUtils.getAccountForName("waelc").getMessages().getMessage().size());
     }
-        
+    
+    @Test
+    public void testDelete(){
+        AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
+        Pop3Client client=Pop3Client.create(account);
+        client.connect();
+        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        client.login();
+        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        client.list();
+        assertEquals(2,client.getMessageInfo().size());
+        client.dele(1);
+        client.quit();
+        client=Pop3Client.create(account);
+        client.connect();
+        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        client.login();
+        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        client.list();
+        assertEquals(1,client.getMessageInfo().size());
+        client.quit();      
+    }
+    
+    @Test
+    public void testReset(){
+        AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
+        Pop3Client client=Pop3Client.create(account);
+        client.connect();
+        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        client.login();
+        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        client.list();
+        assertEquals(2,client.getMessageInfo().size());
+        client.dele(1);
+        client.rset();
+        client.quit();
+        client=Pop3Client.create(account);
+        client.connect();
+        assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
+        client.login();
+        assertEquals(Pop3Client.State.TRANSACTION, client.getClientState());
+        client.list();
+        assertEquals(2,client.getMessageInfo().size());
+        client.quit();   
+    }
+    
     
     @After
     public void tearDown() throws Exception {
