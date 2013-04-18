@@ -2,6 +2,7 @@ package de.haw_hamburg.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -66,6 +67,7 @@ public class DBUtils {
         MessageType newMessage = new MessageType();
         newMessage.setId(id);
         newMessage.setContent(content);
+        newMessage.setProxyuid(UUID.randomUUID().toString());
         account.getMessages().getMessage().add(newMessage);
         saveAccount(account);
     }

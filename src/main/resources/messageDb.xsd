@@ -22,6 +22,7 @@
 			<xsd:element name="id" type="xsd:long" />
 			<xsd:element name="uid" type="xsd:string" minOccurs="0"
 				maxOccurs="1" />
+				<xsd:element name="proxyuid" type="xsd:string" />
 			<xsd:element name="content" type="xsd:string" />
 		</xsd:sequence>
 	</xsd:complexType>
