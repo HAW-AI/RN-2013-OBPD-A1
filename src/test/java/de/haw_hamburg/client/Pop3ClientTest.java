@@ -36,7 +36,7 @@ public class Pop3ClientTest {
     @Before
     public void setUp() throws Exception {
     	
-    	Files.copy(Paths.get("src/main/resources/messageDbTemplate.xml"), Paths.get("src/main/resources/messageDb.xml"), StandardCopyOption.REPLACE_EXISTING);
+    	Files.copy(Paths.get("src/main/resources/messageDbTemplate.xml"), Paths.get("data/messageDb.xml"), StandardCopyOption.REPLACE_EXISTING);
         greenMail = new GreenMail(ServerSetupTest.ALL);
         greenMail.start();
 
@@ -51,7 +51,7 @@ public class Pop3ClientTest {
 
     @Test
     public void testLogin() {
-        AccountType account=ObjectFactory.createAccountType("waelc", "soooosecret", "localhost", 3110);
+        AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED,client.getClientState());
@@ -61,7 +61,7 @@ public class Pop3ClientTest {
     
     @Test
     public void testQuit() {
-    	AccountType account=ObjectFactory.createAccountType("waelc", "soooosecret", "localhost", 3110);
+    	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
@@ -73,7 +73,7 @@ public class Pop3ClientTest {
     
     @Test
     public void testStat() {
-    	AccountType account=ObjectFactory.createAccountType("waelc", "soooosecret", "localhost", 3110);
+    	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
@@ -86,7 +86,7 @@ public class Pop3ClientTest {
     
     @Test
     public void testList(){
-    	AccountType account=ObjectFactory.createAccountType("waelc", "soooosecret", "localhost", 3110);
+    	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
@@ -99,7 +99,7 @@ public class Pop3ClientTest {
     
     @Test
     public void testListWithMessageNumber(){
-    	AccountType account=ObjectFactory.createAccountType("waelc", "soooosecret", "localhost", 3110);
+    	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED, client.getClientState());
@@ -114,7 +114,7 @@ public class Pop3ClientTest {
     
     @Test
     public void testRetrieve() throws JAXBException{
-    	AccountType account=ObjectFactory.createAccountType("waelc", "soooosecret", "localhost", 3110);
+    	AccountType account=DBUtils.createAccountType("waelc", "soooosecret", "localhost", 3110);
         Pop3Client client=Pop3Client.create(account);
         client.connect();
         assertEquals(Pop3Client.State.CONNECTED, client.getClientState());

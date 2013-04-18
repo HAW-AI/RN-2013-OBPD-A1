@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<database>
+    <account>
+        <name>waelc</name>
+        <password>soooosecret</password>
+        <pop3server>da@localhost.com</pop3server>
+        <pop3port>11000</pop3port>
+        <messages>
+            <message>
+                <id>1</id>
+                <content>From: from@example.comTo: wael@localhost.comMessage-ID: &lt;1106375515.01366296953923.JavaMail.egon@egon-desktop&gt;Subject: This is the Subject Line!MIME-Version: 1.0Content-Type: text/plain; charset=us-asciiContent-Transfer-Encoding: 7bitThis is actual message</content>
+            </message>
+        </messages>
+    </account>
+</database>
