@@ -51,35 +51,46 @@ public class Pop3Server extends Pop3Component {
 		Request request = Requests.fromRawRequest(rawRequest);
 		
 		if (request.isUser()) {
+			ensureCorrectState(Pop3State.AUTHORIZATION);
 			// get user
 			// send ok if exists
 			// send err if not
 		} else if (request.isPass()) {
+			ensureCorrectState(Pop3State.AUTHORIZATION);
 			// get pass
 			// send ok if pass matches user
 			// send err if not
 		} else if (request.isDelete()) {
+			ensureCorrectState(Pop3State.TRANSACTION);
 			// mark message as deleted unless it has been marked as such already
 			// send ok if marked as deleted
 			// send err if message not found or already marked
 		} else if (request.isUidl()) {
+			ensureCorrectState(Pop3State.TRANSACTION);
 			// differentiate between simple and complex somehow
 		} else if (request.isQuit()) {
-			// save everything
+			ensureCorrectState(Pop3State.AUTHORIZATION,
+							   Pop3State.TRANSACTION);
+			// save everything unless in authorization phase
 			// send ok
 			// close socket
 		} else if (request.isList()) {
+			ensureCorrectState(Pop3State.TRANSACTION);
 			// differentiate between simple and complex
 		} else if (request.isReset()) {
+			ensureCorrectState(Pop3State.TRANSACTION);
 			// reset list of messages marked for deletion
 			// send ok
 		} else if (request.isNoop()) {
+			ensureCorrectState(Pop3State.TRANSACTION);
 			// send ok
 		} else if (request.isRetrieve()) {
+			ensureCorrectState(Pop3State.TRANSACTION);
 			// send ok
 			// send message
 			// send termination crlf.crlf
 		} else if (request.isStat()) {
+			ensureCorrectState(Pop3State.TRANSACTION);
 			// send ok with number of messages in maildrop and number of bytes
 		} else {
 			// FIXME Log error
