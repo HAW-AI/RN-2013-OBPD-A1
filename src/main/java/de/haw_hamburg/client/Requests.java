@@ -69,4 +69,41 @@ public class Requests {
         return new ComplexUidlRequest(Integer.valueOf(messageNumber).toString());
     }
 
+    public static Request fromRawRequest(String rawRequest) {
+		String cleanedRequestString = rawRequest.trim();
+
+		if (cleanedRequestString.startsWith(Requests.USER)) {
+			return user(cleanedRequestString.split("\\s")[1]);
+		} else if (cleanedRequestString.startsWith(Requests.PASS)) {
+			return pass(cleanedRequestString.split("\\s")[1]);
+		} else if (cleanedRequestString.startsWith(Requests.DELE)) {
+			return delete(Integer.parseInt(cleanedRequestString.split("\\s")[1]));
+		} else if (cleanedRequestString.startsWith(Requests.UIDL)) {
+			if (cleanedRequestString.split("\\s").length > 1) {
+				return uniqueIdListing(Integer.parseInt(cleanedRequestString.split("\\s")[1]));
+			} else {
+				return uniqueIdListing();
+			}
+		} else if (cleanedRequestString.startsWith(Requests.QUIT)) {
+			return quit();
+		} else if (cleanedRequestString.startsWith(Requests.LIST)) {
+			if (cleanedRequestString.split("\\s").length > 1) {
+				return list(Integer.parseInt(cleanedRequestString.split("\\s")[1]));
+			} else {
+				return list();
+			}
+		} else if (cleanedRequestString.startsWith(Requests.RSET)) {
+			return reset();
+		} else if (cleanedRequestString.startsWith(Requests.NOOP)) {
+			return noop();
+		} else if (cleanedRequestString.startsWith(Requests.RETR)) {
+			return retrieve(Integer.parseInt(cleanedRequestString.split("\\s")[1]));
+		} else if (cleanedRequestString.startsWith(Requests.STAT)) {
+			return stat();
+		} else {
+			// FIXME log something
+			return null;
+		}
+	}
+
 }
