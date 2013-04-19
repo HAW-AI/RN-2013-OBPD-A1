@@ -8,6 +8,8 @@ import java.util.HashSet;
 
 import org.omg.CORBA.Request;
 
+import de.haw_hamburg.server.Reply;
+
 public abstract class Pop3Component extends Thread {
     
     protected PrintWriter out;
@@ -34,5 +36,9 @@ public abstract class Pop3Component extends Thread {
     
     protected void println(Request request) throws IOException {
         out.println(request.toString());
+    }
+
+    protected void println(Reply reply) throws IOException {
+        out.println(reply.toString());
     }
 }

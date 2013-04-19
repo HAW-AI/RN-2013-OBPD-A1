@@ -8,6 +8,8 @@
 
 package de.haw_hamburg.db;
 
+import java.nio.charset.Charset;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -138,6 +140,10 @@ public class MessageType {
      */
     public void setContent(String value) {
         this.content = value;
+    }
+    
+    public Integer getContentLengthInBytes() {
+    	return getContent().getBytes(Charset.forName("US-ASCII")).length;
     }
 
 }

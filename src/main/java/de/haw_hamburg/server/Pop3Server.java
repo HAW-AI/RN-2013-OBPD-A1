@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+import javax.xml.bind.JAXBException;
 
 import de.haw_hamburg.client.DeleteRequest;
 import de.haw_hamburg.client.NoopRequest;
@@ -22,9 +26,14 @@ import de.haw_hamburg.client.StatRequest;
 import de.haw_hamburg.client.UserRequest;
 import de.haw_hamburg.common.Pop3Component;
 import de.haw_hamburg.common.Pop3State;
+import de.haw_hamburg.db.AccountType;
+import de.haw_hamburg.db.DBUtils;
+import de.haw_hamburg.db.MessageType;
+import de.haw_hamburg.db.MessagesType;
 
 public class Pop3Server extends Pop3Component {
 	private Set<Integer> markedAsDeleted;
+	private AccountType account;
 
 	private Pop3Server(BufferedReader in, PrintWriter out) {
 		this.in = in;
@@ -47,23 +56,33 @@ public class Pop3Server extends Pop3Component {
 				handleRequest(rawRequest);
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JAXBException e) {
+				e.printStackTrace();
 			}
 		}
 	}
 
-	public void handleRequest(String rawRequest) {
+	public void handleRequest(String rawRequest) throws IOException, JAXBException {
 		Request request = Requests.fromRawRequest(rawRequest);
 		
 		if (request.isUser()) {
 			ensureCorrectState(Pop3State.AUTHORIZATION);
 			// get user
-			// send ok if exists
-			// send err if not
+			AccountType account = DBUtils.getAccountForName(request.param());
+			if (account != null) {
+				this.account = account;
+				sendOk();
+			} else {
+				sendError("Unknown user");
+			}
 		} else if (request.isPass()) {
 			ensureCorrectState(Pop3State.AUTHORIZATION);
 			// get pass
-			// send ok if pass matches user
-			// send err if not
+			if (account != null && account.getPassword() == request.param()) {
+				sendOk();
+			} else {
+				sendError("Not a valid user/password combination");
+			}
 		} else if (request.isDelete()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			// mark message as deleted unless it has been marked as such already
@@ -74,25 +93,52 @@ public class Pop3Server extends Pop3Component {
 			}
 		} else if (request.isUidl()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
+			// TODO
 			// differentiate between simple and complex somehow
 		} else if (request.isQuit()) {
 			ensureCorrectState(Pop3State.AUTHORIZATION,
 							   Pop3State.TRANSACTION);
-			// save everything unless in authorization phase
-			// send ok
-			// close socket
+			if (state == Pop3State.TRANSACTION) {
+				// TODO save everything 
+			}
+			sendOk();
+			disconnect();
 		} else if (request.isList()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			// differentiate between simple and complex
+			sendOk();
+			if (request instanceof SimpleListRequest) {
+				for (MessageType message : account.getMessages().getMessage()) {
+					if (!isMessageMarkedForDeletion(safeLongToInt(message.getId()))) {
+						println(listMessageLine(message));
+					}
+					
+				}
+			} else {
+				MessageType requestedMessage = null;
+				for (MessageType message : account.getMessages().getMessage()) {
+					if (message.getId() == (long)Integer.parseInt(request.param())) {
+						requestedMessage = message;
+					}
+				} 
+				
+				if (requestedMessage == null || isMessageMarkedForDeletion(safeLongToInt(requestedMessage.getId()))) {
+					sendError("no such message");
+				} else {
+					OkReply reply = OkReply.okReply(listMessageLine(requestedMessage));
+					sendOk(reply);
+				}
+			}
+			// TODO terminate with CRLF pair
 		} else if (request.isReset()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			// reset list of messages marked for deletion
-			// send ok
+			resetMessagesMarkedForDeletion();
+			sendOk();
 		} else if (request.isNoop()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			// send ok
+			sendOk();
 		} else if (request.isRetrieve()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
+			// TODO
 			// send ok
 			// send message
 			// send termination crlf.crlf
@@ -102,6 +148,22 @@ public class Pop3Server extends Pop3Component {
 		} else {
 			// FIXME Log error
 		}
+	}
+
+	private void sendError() throws IOException {
+		println(ErrorReply.errorReply());
+	}
+
+	private void sendError(String errorMessage) throws IOException {
+		println(ErrorReply.errorReply(errorMessage));
+	}
+
+	private void sendOk() throws IOException {
+		println(OkReply.okReply());
+	}
+
+	private void sendOk(OkReply reply) throws IOException {
+		println(reply);
 	}
 
 	private boolean isMessageMarkedForDeletion(Integer messageNumber) {
@@ -114,6 +176,26 @@ public class Pop3Server extends Pop3Component {
 		} else {
 			return markedAsDeleted.add(messageNumber);
 		}
+	}
+
+	private void resetMessagesMarkedForDeletion() {
+		markedAsDeleted.clear();
+	}
+
+	private void disconnect() {
+		interrupt();
+	}
+
+	private String listMessageLine(MessageType message) {
+		return "" + message.getId() + "" + message.getContentLengthInBytes();
+	}
+
+	public static int safeLongToInt(long l) {
+		if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+			throw new IllegalArgumentException(l
+					+ " cannot be cast to int without changing its value.");
+		}
+		return (int) l;
 	}
 
 }
