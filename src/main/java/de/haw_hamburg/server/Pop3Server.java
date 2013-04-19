@@ -1,6 +1,7 @@
 package de.haw_hamburg.server;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -87,9 +88,9 @@ public class Pop3Server extends Pop3Component {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			// mark message as deleted unless it has been marked as such already
 			if (markMessageForDeletion(Integer.parseInt(request.param()))) {
-				// send ok if marked as deleted
+				sendOk(OkReply.okReply("message deleted"));
 			} else {
-				// send err if message not found or already marked
+				sendError("no such message");
 			}
 		} else if (request.isUidl()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
@@ -99,9 +100,17 @@ public class Pop3Server extends Pop3Component {
 			ensureCorrectState(Pop3State.AUTHORIZATION,
 							   Pop3State.TRANSACTION);
 			if (state == Pop3State.TRANSACTION) {
-				// TODO save everything 
+				state = Pop3State.UPDATE;
+				if (removeMessagesMarkedForDeletion()) {
+					DBUtils.saveAccount(account); // save all account changes
+					sendOk();
+				} else {
+					sendError("some deleted messages not removed");
+				}
+			} else {
+				// Remove nothing in the AUTHORIZATION State
+				sendOk();
 			}
-			sendOk();
 			disconnect();
 		} else if (request.isList()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
@@ -141,13 +150,17 @@ public class Pop3Server extends Pop3Component {
 			// TODO
 			// send ok
 			// send message
-			// send termination crlf.crlf
+			// TODO send termination crlf.crlf
 		} else if (request.isStat()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			// send ok with number of messages in maildrop and number of bytes
 		} else {
 			// FIXME Log error
 		}
+	}
+
+	private boolean removeMessagesMarkedForDeletion() throws FileNotFoundException, JAXBException {
+		return DBUtils.removeMessagesMarkedForDeletion(account, markedAsDeleted);
 	}
 
 	private void sendError() throws IOException {

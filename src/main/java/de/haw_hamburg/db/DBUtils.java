@@ -2,6 +2,7 @@ package de.haw_hamburg.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +13,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import de.haw_hamburg.server.Pop3Server;
 
 public class DBUtils {
 
@@ -73,6 +76,23 @@ public class DBUtils {
         account.getMessages().getMessage().add(newMessage);
         saveAccount(account);
     }
+
+	public static boolean removeMessagesMarkedForDeletion(AccountType account,
+			Set<Integer> messagesMarkedForDeletion)
+			throws FileNotFoundException, JAXBException {
+		boolean result = true;
+		MessagesType messages = new MessagesType();
+		for (MessageType message : account.getMessages().getMessage()) {
+			if (!messagesMarkedForDeletion.contains(Pop3Server.safeLongToInt(message.getId()))) {
+				messages.message.add(message);
+				// TODO if something goes wrong we should return false. right now
+				// 		this method always returns true.
+			}
+		}
+		account.messages = messages;
+		saveAccount(account);
+		return result;
+	}
 
     /**
      * Create an instance of {@link AccountType }
