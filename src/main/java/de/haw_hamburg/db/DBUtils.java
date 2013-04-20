@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -48,6 +47,23 @@ public class DBUtils {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Add a new account to database. No integrity checks are performed. 
+	 * @param account
+	 * @throws JAXBException
+	 * @throws FileNotFoundException
+	 */
+	public static void addAccount(AccountType account) throws JAXBException, FileNotFoundException{
+		JAXBContext context = JAXBContext.newInstance(JAXBCONTEXT);
+		Database db = getDatabase();
+		List<AccountType> accounts=db.getAccount();
+		accounts.add(account);
+		Marshaller marshaller = context.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(
+				true));
+		marshaller.marshal(db, new FileOutputStream(DATABASE_PATH));
 	}
 
 	public static void saveAccount(AccountType account) throws JAXBException,
@@ -115,12 +131,32 @@ public class DBUtils {
 		return result;
 	}
 
-	public static List<MessageType> getAllMessages() {
-		return new ArrayList<MessageType>();
+	/**
+	 * List of all messages in all accounts. The order is not guaranteed.
+	 * @return list of messages
+	 * @throws JAXBException
+	 */
+	public static List<MessageType> getAllMessages() throws JAXBException {
+		List<MessageType> result=new ArrayList<MessageType>();
+		for(AccountType account:getAccounts()){
+			result.addAll(account.getMessages().getMessage());
+		}
+		return result;
 	}
 
-	public static Map<String, MessageType> getAllMessagesUidl() {
-		return new HashMap<String, MessageType>();
+	/**
+	 * Get mapping of proxy uid to message
+	 * @return map of proxy uid to message
+	 * @throws JAXBException
+	 * 
+	 * TODO: Rename to getAllMessagesProxyUidl
+	 */
+	public static Map<String, MessageType> getAllMessagesUidl() throws JAXBException {
+		Map<String,MessageType> result=new HashMap<String, MessageType>();
+		for(MessageType message:getAllMessages()){
+			result.put(message.getProxyuid(), message);
+		}
+		return result;
 	}
 
 }
