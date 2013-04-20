@@ -14,6 +14,8 @@ import javax.mail.Store;
 
 import org.junit.Test;
 
+import de.haw_hamburg.Starter;
+
 public class Pop3ServerTest {
 
 	@Test
@@ -25,8 +27,7 @@ public class Pop3ServerTest {
 	    String password = "soooosecret";
 	    String provider = "pop3";
 	    
-	    Pop3Server pop3Server = Pop3Server.create();
-	    pop3Server.run();
+	    Starter.main(null);
 
 	    Session session = Session.getDefaultInstance(props, null);
 	    Store store = session.getStore(provider);
