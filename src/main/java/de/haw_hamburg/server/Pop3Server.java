@@ -59,6 +59,8 @@ public class Pop3Server extends Pop3Component {
 
 	public void run() {
 		try {
+			println(OkReply.okReply("POP server ready"));
+			state=Pop3State.AUTHORIZATION;
 			String rawRequest = in.readLine();
 			while (!this.isInterrupted() && rawRequest != null) {
 				try {
@@ -71,6 +73,7 @@ public class Pop3Server extends Pop3Component {
 					e.printStackTrace();
 				}
 			}
+			LOG.info("Connection terminated");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -85,7 +88,7 @@ public class Pop3Server extends Pop3Component {
 			// get user
 			if (USER_NAME.equals(request.param())) {
 				correctUserName = true;
-				sendOk();
+				sendOk(OkReply.okReply("please enter password"));
 			} else {
 				sendError("Unknown user");
 			}
@@ -94,6 +97,7 @@ public class Pop3Server extends Pop3Component {
 			// get pass
 			if (correctUserName && PASSWORD.equals(request.param())) {
 				sendOk();
+				state=Pop3State.TRANSACTION;
 			} else {
 				sendError("Not a valid user/password combination");
 			}
@@ -111,16 +115,16 @@ public class Pop3Server extends Pop3Component {
 			if (!request.hasParam()) {
 				sendOk();
 				// unique-id listing follows
-				for (MessageType message : messages) {
-					println("" + message.getId() + "" + message.getUid());
+				for (int i=0; i<messages.size();i++) {
+					println((i+1) + " " + messages.get(i).getProxyuid());
 				}
-				// TODO send termination crlf.crlf
+				println(TERMINATION);
 			} else {
-				int indexOfMessage = messages.indexOf(Integer.parseInt(request
-						.param()));
+				int indexOfMessage = Integer.parseInt(request
+						.param()) -1;
 				MessageType message = messages.get(indexOfMessage);
-				sendOk(OkReply.okReply("" + message.getId() + ""
-						+ message.getUid()));
+				sendOk(OkReply.okReply("" + indexOfMessage + " "
+						+ message.getProxyuid()));
 			}
 			// differentiate between simple and complex somehow
 		} else if (request.isQuit()) {
@@ -141,20 +145,19 @@ public class Pop3Server extends Pop3Component {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			if (!request.hasParam()) {
 				sendOk();
-				for (MessageType message : messages) {
-					if (!isMessageMarkedForDeletion(safeLongToInt(message
-							.getId()))) {
-						println(listMessageLine(message));
-					}
+				// TODO: Introduce marked as deletion
+//				if (!isMessageMarkedForDeletion(safeLongToInt(message.getId()))) {
+//					println(listMessageLine(message));
+//				}
+				for(int i=0; i<messages.size();i++){
+					println(i+1+" "+messages.get(i).getContentLengthInBytes());
 				}
+				println(TERMINATION);
 			} else {
 				MessageType requestedMessage = null;
-				for (MessageType message : messages) {
-					if (message.getId() == (long) Integer.parseInt(request
-							.param())) {
-						requestedMessage = message;
-					}
-				}
+				int indexOfMessage=Integer.parseInt(request
+						.param()) -1 ;
+				requestedMessage=messages.get(indexOfMessage);
 
 				if (requestedMessage == null
 						|| isMessageMarkedForDeletion(safeLongToInt(requestedMessage
@@ -162,11 +165,10 @@ public class Pop3Server extends Pop3Component {
 					sendError("no such message");
 				} else {
 					OkReply reply = OkReply
-							.okReply(listMessageLine(requestedMessage));
+							.okReply((indexOfMessage+1) + "" +requestedMessage.getContentLengthInBytes());
 					sendOk(reply);
 				}
 			}
-			// TODO terminate with CRLF pair
 		} else if (request.isReset()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			resetMessagesMarkedForDeletion();
@@ -177,15 +179,15 @@ public class Pop3Server extends Pop3Component {
 		} else if (request.isRetrieve()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			// List<MessageType> messages = DBUtils.getAllMessages();
-			int indexOfMessageInMessagesList = messages.indexOf(Integer
-					.parseInt(request.param()));
+			int indexOfMessageInMessagesList = Integer
+					.parseInt(request.param()) -1;
 			if (messages.size() >= indexOfMessageInMessagesList + 1) {
 				MessageType message = messages
 						.get(indexOfMessageInMessagesList);
-				sendOk(OkReply.okReply("" + message.getId() + ""
+				sendOk(OkReply.okReply("" + message.getId() + " "
 						+ message.getContentLengthInBytes() + "octets"));
 				println(message.getContent());
-				// TODO send termination crlf.crlf
+				println(TERMINATION);
 			} else {
 				sendError("no such message");
 			}
@@ -198,8 +200,11 @@ public class Pop3Server extends Pop3Component {
 			}
 			// send ok with number of messages in maildrop and number of bytes
 			sendOk(OkReply.okReply("" + messages.size() + " " + sizeOfMaildrop));
-		} else {
-			// FIXME Log error
+		} else if(request.isUnknown()) {
+			sendError("unknown request");
+		}
+		else{
+			// this should not happen!!!
 		}
 	}
 
@@ -250,7 +255,7 @@ public class Pop3Server extends Pop3Component {
 	}
 
 	private String listMessageLine(MessageType message) {
-		return "" + message.getId() + "" + message.getContentLengthInBytes();
+		return "" + message.getId() + " " + message.getContentLengthInBytes();
 	}
 
 	public static int safeLongToInt(long l) {

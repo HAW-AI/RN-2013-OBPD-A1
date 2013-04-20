@@ -15,6 +15,8 @@ public abstract class Pop3Component extends Thread {
 	protected PrintWriter out;
 	protected BufferedReader in;
 	protected Pop3State state = Pop3State.IDLE;
+	protected static final String CRLF="\r\n";
+	protected static final String TERMINATION=".";
 
 	public Pop3State getPop3State() {
 		return state;
@@ -32,14 +34,17 @@ public abstract class Pop3Component extends Thread {
 	}
 
 	protected void println(String line) throws IOException {
-		out.println(line);
+		System.out.println("Sending: "+line);
+		out.println(line+"\r\n");
 	}
 
 	protected void println(Request request) throws IOException {
-		out.println(request.toString());
+		System.out.println("C: "+request);
+		out.println(request.toString()+"\r\n");
 	}
 
 	protected void println(Reply reply) throws IOException {
-		out.println(reply.toString());
+		System.out.println("S: "+reply);
+		out.println(reply.toString()+"\r\n");
 	}
 }

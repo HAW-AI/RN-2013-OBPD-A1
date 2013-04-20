@@ -105,8 +105,7 @@ public class Requests {
 		} else if (cleanedRequestString.startsWith(Requests.STAT)) {
 			return stat();
 		} else {
-			// FIXME log something
-			return null;
+			return new UnknownRequest(cleanedRequestString);
 		}
 	}
 

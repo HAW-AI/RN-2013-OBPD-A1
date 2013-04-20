@@ -58,7 +58,7 @@ public class OkReply implements Reply {
 	}
 
 	public String toString() {
-		return (okRegex() + " " + params).trim();
+		return (okString() + " " + params).trim();
 	}
 
 	public boolean isOk() {
