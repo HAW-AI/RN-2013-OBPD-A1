@@ -30,21 +30,23 @@ public abstract class Pop3Component extends Thread {
 	}
 
 	protected String readLine() throws IOException {
-		return in.readLine();
+		String result=in.readLine();
+		System.out.println("Received: "+result);
+		return result;
 	}
 
 	protected void println(String line) throws IOException {
 		System.out.println("Sending: "+line);
-		out.println(line+"\r\n");
+		out.println(line);
 	}
 
 	protected void println(Request request) throws IOException {
 		System.out.println("C: "+request);
-		out.println(request.toString()+"\r\n");
+		out.println(request.toString());
 	}
 
 	protected void println(Reply reply) throws IOException {
 		System.out.println("S: "+reply);
-		out.println(reply.toString()+"\r\n");
+		out.println(reply.toString());
 	}
 }

@@ -84,7 +84,7 @@ public class Pop3Client extends Pop3Component {
 		ensureCorrectState(Pop3State.AUTHORIZATION);
 		try {
 			isOk();
-			sendAndWaitForOk(Requests.user(account.getName()).toString());
+			sendAndWaitForOk(Requests.user(account.getName()));
 		} catch (IOException e) {
 			logError("Failed to send username", e);
 			e.printStackTrace();
@@ -94,7 +94,7 @@ public class Pop3Client extends Pop3Component {
 	private void pass() {
 		ensureCorrectState(Pop3State.AUTHORIZATION);
 		try {
-			sendAndWaitForOk(Requests.pass(account.getPassword()).toString());
+			sendAndWaitForOk(Requests.pass(account.getPassword()));
 		} catch (IOException e) {
 			logError("Failed to send pass", e);
 			e.printStackTrace();
@@ -107,7 +107,7 @@ public class Pop3Client extends Pop3Component {
 			if (state == Pop3State.TRANSACTION) {
 				state = Pop3State.UPDATE;
 			}
-			sendAndWaitForOk(Requests.quit().toString());
+			sendAndWaitForOk(Requests.quit());
 		} catch (IOException e) {
 			logError("Failed to quit", e);
 			e.printStackTrace();
@@ -300,11 +300,6 @@ public class Pop3Client extends Pop3Component {
 					"Tried to access message marked for deletion.");
 	}
 
-	private boolean sendAndWaitForOk(String command) throws IOException {
-		println(command);
-		return isOk();
-	}
-
 	private boolean sendAndWaitForOk(Request command) throws IOException {
 		println(command.toString());
 		return isOk();
@@ -328,7 +323,7 @@ public class Pop3Client extends Pop3Component {
 	private boolean isOk() throws IOException {
 		String response = readLine();
 		Reply reply = Replies.replyFromString(response);
-		return OkReply.class.isInstance(reply);
+		return reply.isOk();
 	}
 
 	protected Integer getNumberOfMessagesInMaildrop() {
@@ -338,10 +333,8 @@ public class Pop3Client extends Pop3Component {
 	protected Integer getSizeOfMaildropInOctets() {
 		return this.sizeOfMaildropInOctets;
 	}
-
-	public void run() {
-		connect();
-		login();
+	public void setMarkedAsDeleted(Set<Integer> markedAsDeleted) {
+		this.markedAsDeleted = markedAsDeleted;
 	}
 
 	private void logError(String message, Exception e) {
