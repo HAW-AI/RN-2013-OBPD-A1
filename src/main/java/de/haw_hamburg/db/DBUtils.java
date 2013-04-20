@@ -48,17 +48,19 @@ public class DBUtils {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Add a new account to database. No integrity checks are performed. 
+	 * Add a new account to database. No integrity checks are performed.
+	 * 
 	 * @param account
 	 * @throws JAXBException
 	 * @throws FileNotFoundException
 	 */
-	public static void addAccount(AccountType account) throws JAXBException, FileNotFoundException{
+	public static void addAccount(AccountType account) throws JAXBException,
+			FileNotFoundException {
 		JAXBContext context = JAXBContext.newInstance(JAXBCONTEXT);
 		Database db = getDatabase();
-		List<AccountType> accounts=db.getAccount();
+		List<AccountType> accounts = db.getAccount();
 		accounts.add(account);
 		Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(
@@ -99,31 +101,33 @@ public class DBUtils {
 			List<MessageType> messagesMarkedForDeletion)
 			throws FileNotFoundException, JAXBException {
 		boolean result = true;
-		for(MessageType message:messagesMarkedForDeletion){
+		for (MessageType message : messagesMarkedForDeletion) {
 			removeMessageByProxyUid(message.getProxyuid());
 		}
-//		for (MessageType message : account.getMessages().getMessage()) {
-//			if (!messagesMarkedForDeletion.contains(Pop3Server
-//					.safeLongToInt(message.getId()))) {
-//				messages.message.add(message);
-//				// TODO if something goes wrong we should return false. right
-//				// now
-//				// this method always returns true.
-//			}
-//		}
-//		account.messages = messages;
-//		saveAccount(account);
+		// for (MessageType message : account.getMessages().getMessage()) {
+		// if (!messagesMarkedForDeletion.contains(Pop3Server
+		// .safeLongToInt(message.getId()))) {
+		// messages.message.add(message);
+		// // TODO if something goes wrong we should return false. right
+		// // now
+		// // this method always returns true.
+		// }
+		// }
+		// account.messages = messages;
+		// saveAccount(account);
 		return result;
 	}
-	
-	private static void removeMessageByProxyUid(String proxyUid) throws JAXBException, FileNotFoundException{
+
+	private static void removeMessageByProxyUid(String proxyUid)
+			throws JAXBException, FileNotFoundException {
 		JAXBContext context = JAXBContext.newInstance(JAXBCONTEXT);
 		Unmarshaller unmarshaller = context.createUnmarshaller();
-		Database db= (Database) unmarshaller.unmarshal(new File(DATABASE_PATH));
-		List<AccountType> accounts=db.getAccount();
-		for(AccountType account:accounts){
-			MessageType message=getMessageByProxyUid(account,proxyUid);
-			if(message!=null){
+		Database db = (Database) unmarshaller
+				.unmarshal(new File(DATABASE_PATH));
+		List<AccountType> accounts = db.getAccount();
+		for (AccountType account : accounts) {
+			MessageType message = getMessageByProxyUid(account, proxyUid);
+			if (message != null) {
 				account.getMessages().getMessage().remove(message);
 			}
 		}
@@ -132,10 +136,11 @@ public class DBUtils {
 				true));
 		marshaller.marshal(db, new FileOutputStream(DATABASE_PATH));
 	}
-	
-	private static MessageType getMessageByProxyUid(AccountType account,String proxyUid){
-		for(MessageType message:account.getMessages().getMessage()){
-			if(proxyUid.equals(message.getProxyuid()))
+
+	private static MessageType getMessageByProxyUid(AccountType account,
+			String proxyUid) {
+		for (MessageType message : account.getMessages().getMessage()) {
+			if (proxyUid.equals(message.getProxyuid()))
 				return message;
 		}
 		return null;
@@ -160,12 +165,13 @@ public class DBUtils {
 
 	/**
 	 * List of all messages in all accounts. The order is not guaranteed.
+	 * 
 	 * @return list of messages
 	 * @throws JAXBException
 	 */
 	public static List<MessageType> getAllMessages() throws JAXBException {
-		List<MessageType> result=new ArrayList<MessageType>();
-		for(AccountType account:getAccounts()){
+		List<MessageType> result = new ArrayList<MessageType>();
+		for (AccountType account : getAccounts()) {
 			result.addAll(account.getMessages().getMessage());
 		}
 		return result;
@@ -173,14 +179,16 @@ public class DBUtils {
 
 	/**
 	 * Get mapping of proxy uid to message
+	 * 
 	 * @return map of proxy uid to message
 	 * @throws JAXBException
 	 * 
-	 * TODO: Rename to getAllMessagesProxyUidl
+	 *             TODO: Rename to getAllMessagesProxyUidl
 	 */
-	public static Map<String, MessageType> getAllMessagesUidl() throws JAXBException {
-		Map<String,MessageType> result=new HashMap<String, MessageType>();
-		for(MessageType message:getAllMessages()){
+	public static Map<String, MessageType> getAllMessagesUidl()
+			throws JAXBException {
+		Map<String, MessageType> result = new HashMap<String, MessageType>();
+		for (MessageType message : getAllMessages()) {
 			result.put(message.getProxyuid(), message);
 		}
 		return result;
