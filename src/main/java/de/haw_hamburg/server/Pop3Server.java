@@ -44,7 +44,7 @@ public class Pop3Server extends Pop3Component {
 		this.markedAsDeleted = new HashSet<Integer>();
 	}
 
-	public Pop3Server create(Socket socket) throws IOException {
+	public static Pop3Server create(Socket socket) throws IOException {
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
