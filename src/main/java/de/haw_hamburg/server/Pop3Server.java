@@ -178,7 +178,13 @@ public class Pop3Server extends Pop3Component {
 			}
 		} else if (request.isStat()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
+			List<MessageType> messages = DBUtils.getAllMessages();
+			int sizeOfMaildrop = 0;
+			for (MessageType message : messages) {
+				sizeOfMaildrop += message.getContentLengthInBytes();
+			}
 			// send ok with number of messages in maildrop and number of bytes
+			sendOk(OkReply.okReply("" + messages.size() + " " + sizeOfMaildrop));
 		} else {
 			// FIXME Log error
 		}
