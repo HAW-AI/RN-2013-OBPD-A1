@@ -33,7 +33,7 @@ public class Starter {
 		Logger LOG = Logger.getLogger(Starter.class.getName());
 		LOG.info("System started");
 		try {
-			Pop3Server.create();
+			Pop3Server.create().run();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {
