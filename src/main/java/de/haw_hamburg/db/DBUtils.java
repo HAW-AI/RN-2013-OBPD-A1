@@ -1,7 +1,9 @@
 package de.haw_hamburg.db;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.io.File;
@@ -109,6 +111,14 @@ public class DBUtils {
         messages.message = new ArrayList<MessageType>();
         result.setMessages(messages);
         return result;
+    }
+    
+    public static List<MessageType> getAllMessages(){
+        return new ArrayList<MessageType>();
+    }
+    
+    public static Map<String,MessageType> getAllMessagesUidl(){
+        return new HashMap<String,MessageType>();
     }
 
 }
