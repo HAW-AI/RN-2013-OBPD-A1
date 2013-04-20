@@ -2,6 +2,7 @@ package de.haw_hamburg.server;
 
 import static org.junit.Assert.*;
 
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
@@ -24,8 +25,7 @@ public class Pop3ServerTest {
 	    String password = "soooosecret";
 	    String provider = "pop3";
 	    
-	    Socket socket = new Socket(host, 11000);
-	    Pop3Server pop3Server = Pop3Server.create(socket);
+	    Pop3Server pop3Server = Pop3Server.create();
 	    pop3Server.run();
 
 	    Session session = Session.getDefaultInstance(props, null);
