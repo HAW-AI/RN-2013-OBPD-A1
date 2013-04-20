@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import javax.xml.bind.JAXBException;
-
-import de.haw_hamburg.server.Pop3Server;
+import de.haw_hamburg.server.Pop3ServerLauncher;
 
 public class Starter {
 
@@ -32,13 +30,11 @@ public class Starter {
 		initializeLogging();
 		Logger LOG = Logger.getLogger(Starter.class.getName());
 		LOG.info("System started");
-		try {
-			Pop3Server.create().run();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
+
+		// Start client tasks
+		Pop3ServerLauncher launcher = new Pop3ServerLauncher(11000);
+		launcher.start();
+
 	}
 
 }

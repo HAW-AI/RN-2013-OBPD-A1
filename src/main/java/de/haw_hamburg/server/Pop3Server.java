@@ -7,35 +7,20 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.logging.Logger;
 
-import javax.swing.text.StyledEditorKit.ForegroundAction;
 import javax.xml.bind.JAXBException;
 
-import de.haw_hamburg.client.DeleteRequest;
-import de.haw_hamburg.client.NoopRequest;
-import de.haw_hamburg.client.PasswordRequest;
-import de.haw_hamburg.client.QuitRequest;
 import de.haw_hamburg.client.Request;
 import de.haw_hamburg.client.Requests;
-import de.haw_hamburg.client.ResetRequest;
-import de.haw_hamburg.client.RetrieveRequest;
-import de.haw_hamburg.client.SimpleListRequest;
-import de.haw_hamburg.client.SimpleUidlRequest;
-import de.haw_hamburg.client.StatRequest;
-import de.haw_hamburg.client.UserRequest;
 import de.haw_hamburg.common.Pop3Component;
 import de.haw_hamburg.common.Pop3State;
-import de.haw_hamburg.db.AccountType;
 import de.haw_hamburg.db.DBUtils;
 import de.haw_hamburg.db.MessageType;
-import de.haw_hamburg.db.MessagesType;
 
 public class Pop3Server extends Pop3Component {
 	private Map<Integer, MessageType> markedAsDeleted;
@@ -43,6 +28,7 @@ public class Pop3Server extends Pop3Component {
 	private boolean correctUserName = false;
 	public static final String USER_NAME = "Ash";
 	public static final String PASSWORD = "EvilDeadReturns";
+	private static Logger LOG = Logger.getLogger(Pop3Server.class.getName());
 
 	private Pop3Server(BufferedReader in, PrintWriter out,
 			List<MessageType> messages) {
@@ -53,34 +39,40 @@ public class Pop3Server extends Pop3Component {
 		this.markedAsDeleted = new HashMap<Integer, MessageType>();
 	}
 
-
-	public Pop3Server create(Socket socket) throws IOException, JAXBException {
+	public static Pop3Server create(Socket socket) throws IOException,
+			JAXBException {
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
 		return new Pop3Server(in, out, DBUtils.getAllMessages());
 
 	}
-	
+
 	public static Pop3Server create() throws IOException, JAXBException {
 		ServerSocket socket = new ServerSocket(11000);
 		Socket clientSocket = socket.accept();
 		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				clientSocket.getInputStream()));
-		return new Pop3Server(in, out,DBUtils.getAllMessages());
+		return new Pop3Server(in, out, DBUtils.getAllMessages());
 	}
 
 	public void run() {
-		while (!this.isInterrupted()) {
-			try {
-				String rawRequest = in.readLine();
-				handleRequest(rawRequest);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (JAXBException e) {
-				e.printStackTrace();
+		try {
+			String rawRequest = in.readLine();
+			while (!this.isInterrupted() && rawRequest != null) {
+				try {
+					LOG.info("Received request: " + rawRequest);
+					handleRequest(rawRequest);
+					rawRequest = in.readLine();
+				} catch (JAXBException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -213,7 +205,9 @@ public class Pop3Server extends Pop3Component {
 
 	private boolean removeMessagesMarkedForDeletion()
 			throws FileNotFoundException, JAXBException {
-		return DBUtils.removeMessagesMarkedForDeletion(new ArrayList<MessageType>(markedAsDeleted.values()));
+		return DBUtils
+				.removeMessagesMarkedForDeletion(new ArrayList<MessageType>(
+						markedAsDeleted.values()));
 	}
 
 	private void sendError() throws IOException {
