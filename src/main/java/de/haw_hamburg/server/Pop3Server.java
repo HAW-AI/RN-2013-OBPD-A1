@@ -63,9 +63,10 @@ public class Pop3Server extends Pop3Component {
 		}
 	}
 
-	public void handleRequest(String rawRequest) throws IOException, JAXBException {
+	public void handleRequest(String rawRequest) throws IOException,
+			JAXBException {
 		Request request = Requests.fromRawRequest(rawRequest);
-		
+
 		if (request.isUser()) {
 			ensureCorrectState(Pop3State.AUTHORIZATION);
 			// get user
@@ -97,8 +98,7 @@ public class Pop3Server extends Pop3Component {
 			// TODO
 			// differentiate between simple and complex somehow
 		} else if (request.isQuit()) {
-			ensureCorrectState(Pop3State.AUTHORIZATION,
-							   Pop3State.TRANSACTION);
+			ensureCorrectState(Pop3State.AUTHORIZATION, Pop3State.TRANSACTION);
 			if (state == Pop3State.TRANSACTION) {
 				state = Pop3State.UPDATE;
 				if (removeMessagesMarkedForDeletion()) {
@@ -117,23 +117,28 @@ public class Pop3Server extends Pop3Component {
 			sendOk();
 			if (request instanceof SimpleListRequest) {
 				for (MessageType message : account.getMessages().getMessage()) {
-					if (!isMessageMarkedForDeletion(safeLongToInt(message.getId()))) {
+					if (!isMessageMarkedForDeletion(safeLongToInt(message
+							.getId()))) {
 						println(listMessageLine(message));
 					}
-					
+
 				}
 			} else {
 				MessageType requestedMessage = null;
 				for (MessageType message : account.getMessages().getMessage()) {
-					if (message.getId() == (long)Integer.parseInt(request.param())) {
+					if (message.getId() == (long) Integer.parseInt(request
+							.param())) {
 						requestedMessage = message;
 					}
-				} 
-				
-				if (requestedMessage == null || isMessageMarkedForDeletion(safeLongToInt(requestedMessage.getId()))) {
+				}
+
+				if (requestedMessage == null
+						|| isMessageMarkedForDeletion(safeLongToInt(requestedMessage
+								.getId()))) {
 					sendError("no such message");
 				} else {
-					OkReply reply = OkReply.okReply(listMessageLine(requestedMessage));
+					OkReply reply = OkReply
+							.okReply(listMessageLine(requestedMessage));
 					sendOk(reply);
 				}
 			}
@@ -159,8 +164,10 @@ public class Pop3Server extends Pop3Component {
 		}
 	}
 
-	private boolean removeMessagesMarkedForDeletion() throws FileNotFoundException, JAXBException {
-		return DBUtils.removeMessagesMarkedForDeletion(account, markedAsDeleted);
+	private boolean removeMessagesMarkedForDeletion()
+			throws FileNotFoundException, JAXBException {
+		return DBUtils
+				.removeMessagesMarkedForDeletion(account, markedAsDeleted);
 	}
 
 	private void sendError() throws IOException {

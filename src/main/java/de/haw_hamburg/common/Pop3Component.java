@@ -11,34 +11,35 @@ import org.omg.CORBA.Request;
 import de.haw_hamburg.server.Reply;
 
 public abstract class Pop3Component extends Thread {
-    
-    protected PrintWriter out;
-    protected BufferedReader in;
-    protected Pop3State state=Pop3State.IDLE;
-    
-    public Pop3State getPop3State(){
-        return state;
-    }
-    
-    protected void ensureCorrectState(Pop3State... expectedState) {
-        if(!new HashSet<Pop3State>(Arrays.asList(expectedState)).contains(state))
-            throw new IllegalStateException("Expected "
-                    + Arrays.asList(expectedState) + ". was" + state.toString());
-    }
-    
-    protected String readLine() throws IOException {
-        return in.readLine();
-    }
 
-    protected void println(String line) throws IOException {
-        out.println(line);
-    }
-    
-    protected void println(Request request) throws IOException {
-        out.println(request.toString());
-    }
+	protected PrintWriter out;
+	protected BufferedReader in;
+	protected Pop3State state = Pop3State.IDLE;
 
-    protected void println(Reply reply) throws IOException {
-        out.println(reply.toString());
-    }
+	public Pop3State getPop3State() {
+		return state;
+	}
+
+	protected void ensureCorrectState(Pop3State... expectedState) {
+		if (!new HashSet<Pop3State>(Arrays.asList(expectedState))
+				.contains(state))
+			throw new IllegalStateException("Expected "
+					+ Arrays.asList(expectedState) + ". was" + state.toString());
+	}
+
+	protected String readLine() throws IOException {
+		return in.readLine();
+	}
+
+	protected void println(String line) throws IOException {
+		out.println(line);
+	}
+
+	protected void println(Request request) throws IOException {
+		out.println(request.toString());
+	}
+
+	protected void println(Reply reply) throws IOException {
+		out.println(reply.toString());
+	}
 }

@@ -5,7 +5,6 @@
 // Generated on: 2013.04.18 at 05:27:21 PM MESZ 
 //
 
-
 package de.haw_hamburg.db;
 
 import java.nio.charset.Charset;
@@ -15,11 +14,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for messageType complex type.
+ * <p>
+ * Java class for messageType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="messageType">
@@ -39,111 +40,97 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "messageType", propOrder = {
-    "id",
-    "uid",
-    "proxyuid",
-    "content"
-})
+@XmlType(name = "messageType", propOrder = { "id", "uid", "proxyuid", "content" })
 public class MessageType {
 
-    protected long id;
-    protected String uid;
-    @XmlElement(required = true)
-    protected String proxyuid;
-    @XmlElement(required = true)
-    protected String content;
+	protected long id;
+	protected String uid;
+	@XmlElement(required = true)
+	protected String proxyuid;
+	@XmlElement(required = true)
+	protected String content;
 
-    /**
-     * Gets the value of the id property.
-     * 
-     */
-    public long getId() {
-        return id;
-    }
+	/**
+	 * Gets the value of the id property.
+	 * 
+	 */
+	public long getId() {
+		return id;
+	}
 
-    /**
-     * Sets the value of the id property.
-     * 
-     */
-    public void setId(long value) {
-        this.id = value;
-    }
+	/**
+	 * Sets the value of the id property.
+	 * 
+	 */
+	public void setId(long value) {
+		this.id = value;
+	}
 
-    /**
-     * Gets the value of the uid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getUid() {
-        return uid;
-    }
+	/**
+	 * Gets the value of the uid property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getUid() {
+		return uid;
+	}
 
-    /**
-     * Sets the value of the uid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setUid(String value) {
-        this.uid = value;
-    }
+	/**
+	 * Sets the value of the uid property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setUid(String value) {
+		this.uid = value;
+	}
 
-    /**
-     * Gets the value of the proxyuid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getProxyuid() {
-        return proxyuid;
-    }
+	/**
+	 * Gets the value of the proxyuid property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getProxyuid() {
+		return proxyuid;
+	}
 
-    /**
-     * Sets the value of the proxyuid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setProxyuid(String value) {
-        this.proxyuid = value;
-    }
+	/**
+	 * Sets the value of the proxyuid property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setProxyuid(String value) {
+		this.proxyuid = value;
+	}
 
-    /**
-     * Gets the value of the content property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getContent() {
-        return content;
-    }
+	/**
+	 * Gets the value of the content property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getContent() {
+		return content;
+	}
 
-    /**
-     * Sets the value of the content property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setContent(String value) {
-        this.content = value;
-    }
-    
-    public Integer getContentLengthInBytes() {
-    	return getContent().getBytes(Charset.forName("US-ASCII")).length;
-    }
+	/**
+	 * Sets the value of the content property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setContent(String value) {
+		this.content = value;
+	}
+
+	public Integer getContentLengthInBytes() {
+		return getContent().getBytes(Charset.forName("US-ASCII")).length;
+	}
 
 }

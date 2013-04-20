@@ -5,7 +5,6 @@
 // Generated on: 2013.04.18 at 05:27:21 PM MESZ 
 //
 
-
 package de.haw_hamburg.db;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,11 +12,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for accountType complex type.
+ * <p>
+ * Java class for accountType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="accountType">
@@ -38,136 +39,119 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "accountType", propOrder = {
-    "name",
-    "password",
-    "pop3Server",
-    "pop3Port",
-    "messages"
-})
+@XmlType(name = "accountType", propOrder = { "name", "password", "pop3Server",
+		"pop3Port", "messages" })
 public class AccountType {
 
-    @XmlElement(required = true)
-    protected String name;
-    @XmlElement(required = true)
-    protected String password;
-    @XmlElement(name = "pop3server", required = true)
-    protected String pop3Server;
-    @XmlElement(name = "pop3port")
-    protected int pop3Port;
-    @XmlElement(required = true)
-    protected MessagesType messages;
+	@XmlElement(required = true)
+	protected String name;
+	@XmlElement(required = true)
+	protected String password;
+	@XmlElement(name = "pop3server", required = true)
+	protected String pop3Server;
+	@XmlElement(name = "pop3port")
+	protected int pop3Port;
+	@XmlElement(required = true)
+	protected MessagesType messages;
 
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Gets the value of the name property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Sets the value of the name property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setName(String value) {
+		this.name = value;
+	}
 
-    /**
-     * Gets the value of the password property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPassword() {
-        return password;
-    }
+	/**
+	 * Gets the value of the password property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getPassword() {
+		return password;
+	}
 
-    /**
-     * Sets the value of the password property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPassword(String value) {
-        this.password = value;
-    }
+	/**
+	 * Sets the value of the password property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setPassword(String value) {
+		this.password = value;
+	}
 
-    /**
-     * Gets the value of the pop3Server property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPop3Server() {
-        return pop3Server;
-    }
+	/**
+	 * Gets the value of the pop3Server property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getPop3Server() {
+		return pop3Server;
+	}
 
-    /**
-     * Sets the value of the pop3Server property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPop3Server(String value) {
-        this.pop3Server = value;
-    }
+	/**
+	 * Sets the value of the pop3Server property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setPop3Server(String value) {
+		this.pop3Server = value;
+	}
 
-    /**
-     * Gets the value of the pop3Port property.
-     * 
-     */
-    public int getPop3Port() {
-        return pop3Port;
-    }
+	/**
+	 * Gets the value of the pop3Port property.
+	 * 
+	 */
+	public int getPop3Port() {
+		return pop3Port;
+	}
 
-    /**
-     * Sets the value of the pop3Port property.
-     * 
-     */
-    public void setPop3Port(int value) {
-        this.pop3Port = value;
-    }
+	/**
+	 * Sets the value of the pop3Port property.
+	 * 
+	 */
+	public void setPop3Port(int value) {
+		this.pop3Port = value;
+	}
 
-    /**
-     * Gets the value of the messages property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MessagesType }
-     *     
-     */
-    public MessagesType getMessages() {
-        return messages;
-    }
+	/**
+	 * Gets the value of the messages property.
+	 * 
+	 * @return possible object is {@link MessagesType }
+	 * 
+	 */
+	public MessagesType getMessages() {
+		return messages;
+	}
 
-    /**
-     * Sets the value of the messages property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MessagesType }
-     *     
-     */
-    public void setMessages(MessagesType value) {
-        this.messages = value;
-    }
+	/**
+	 * Sets the value of the messages property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link MessagesType }
+	 * 
+	 */
+	public void setMessages(MessagesType value) {
+		this.messages = value;
+	}
 
 }
