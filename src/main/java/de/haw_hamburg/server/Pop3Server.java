@@ -7,8 +7,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.text.StyledEditorKit.ForegroundAction;
@@ -34,21 +37,26 @@ import de.haw_hamburg.db.MessageType;
 import de.haw_hamburg.db.MessagesType;
 
 public class Pop3Server extends Pop3Component {
-	private Set<Integer> markedAsDeleted;
-	private AccountType account;
+	private Map<Integer, MessageType> markedAsDeleted;
+	private List<MessageType> messages;
+	private boolean correctUserName = false;
+	public static final String USER_NAME = "Ash";
+	public static final String PASSWORD = "EvilDeadReturns";
 
-	private Pop3Server(BufferedReader in, PrintWriter out) {
+	private Pop3Server(BufferedReader in, PrintWriter out,
+			List<MessageType> messages) {
 		this.in = in;
 		this.out = out;
 		this.state = Pop3State.CONNECTED;
-		this.markedAsDeleted = new HashSet<Integer>();
+		this.messages = messages;
+		this.markedAsDeleted = new HashMap<Integer, MessageType>();
 	}
 
-	public Pop3Server create(Socket socket) throws IOException {
+	public Pop3Server create(Socket socket) throws IOException, JAXBException {
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
-		return new Pop3Server(in, out);
+		return new Pop3Server(in, out, DBUtils.getAllMessages());
 	}
 
 	public void run() {
@@ -71,9 +79,8 @@ public class Pop3Server extends Pop3Component {
 		if (request.isUser()) {
 			ensureCorrectState(Pop3State.AUTHORIZATION);
 			// get user
-			AccountType account = DBUtils.getAccountForName(request.param());
-			if (account != null) {
-				this.account = account;
+			if (USER_NAME.equals(request.param())) {
+				correctUserName = true;
 				sendOk();
 			} else {
 				sendError("Unknown user");
@@ -81,7 +88,7 @@ public class Pop3Server extends Pop3Component {
 		} else if (request.isPass()) {
 			ensureCorrectState(Pop3State.AUTHORIZATION);
 			// get pass
-			if (account != null && account.getPassword() == request.param()) {
+			if (correctUserName && PASSWORD.equals(request.param())) {
 				sendOk();
 			} else {
 				sendError("Not a valid user/password combination");
@@ -96,18 +103,20 @@ public class Pop3Server extends Pop3Component {
 			}
 		} else if (request.isUidl()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			List<MessageType> messages = DBUtils.getAllMessages();
-			if (request instanceof SimpleUidlRequest) {
+			// List<MessageType> messages = DBUtils.getAllMessages();
+			if (!request.hasParam()) {
 				sendOk();
-				//unique-id listing follows
+				// unique-id listing follows
 				for (MessageType message : messages) {
 					println("" + message.getId() + "" + message.getUid());
 				}
 				// TODO send termination crlf.crlf
 			} else {
-				int indexOfMessage = messages.indexOf(Integer.parseInt(request.param()));
+				int indexOfMessage = messages.indexOf(Integer.parseInt(request
+						.param()));
 				MessageType message = messages.get(indexOfMessage);
-				sendOk(OkReply.okReply("" + message.getId() + "" + message.getUid()));
+				sendOk(OkReply.okReply("" + message.getId() + ""
+						+ message.getUid()));
 			}
 			// differentiate between simple and complex somehow
 		} else if (request.isQuit()) {
@@ -115,7 +124,6 @@ public class Pop3Server extends Pop3Component {
 			if (state == Pop3State.TRANSACTION) {
 				state = Pop3State.UPDATE;
 				if (removeMessagesMarkedForDeletion()) {
-					DBUtils.saveAccount(account); // save all account changes
 					sendOk();
 				} else {
 					sendError("some deleted messages not removed");
@@ -127,9 +135,9 @@ public class Pop3Server extends Pop3Component {
 			disconnect();
 		} else if (request.isList()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			if (request instanceof SimpleListRequest) {
+			if (!request.hasParam()) {
 				sendOk();
-				for (MessageType message : account.getMessages().getMessage()) {
+				for (MessageType message : messages) {
 					if (!isMessageMarkedForDeletion(safeLongToInt(message
 							.getId()))) {
 						println(listMessageLine(message));
@@ -137,7 +145,7 @@ public class Pop3Server extends Pop3Component {
 				}
 			} else {
 				MessageType requestedMessage = null;
-				for (MessageType message : account.getMessages().getMessage()) {
+				for (MessageType message : messages) {
 					if (message.getId() == (long) Integer.parseInt(request
 							.param())) {
 						requestedMessage = message;
@@ -164,8 +172,9 @@ public class Pop3Server extends Pop3Component {
 			sendOk();
 		} else if (request.isRetrieve()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			List<MessageType> messages = DBUtils.getAllMessages();
-			int indexOfMessageInMessagesList = messages.indexOf(Integer.parseInt(request.param()));
+			// List<MessageType> messages = DBUtils.getAllMessages();
+			int indexOfMessageInMessagesList = messages.indexOf(Integer
+					.parseInt(request.param()));
 			if (messages.size() >= indexOfMessageInMessagesList + 1) {
 				MessageType message = messages
 						.get(indexOfMessageInMessagesList);
@@ -178,7 +187,7 @@ public class Pop3Server extends Pop3Component {
 			}
 		} else if (request.isStat()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			List<MessageType> messages = DBUtils.getAllMessages();
+			// List<MessageType> messages = DBUtils.getAllMessages();
 			int sizeOfMaildrop = 0;
 			for (MessageType message : messages) {
 				sizeOfMaildrop += message.getContentLengthInBytes();
@@ -192,8 +201,7 @@ public class Pop3Server extends Pop3Component {
 
 	private boolean removeMessagesMarkedForDeletion()
 			throws FileNotFoundException, JAXBException {
-		return DBUtils
-				.removeMessagesMarkedForDeletion(account, markedAsDeleted);
+		return DBUtils.removeMessagesMarkedForDeletion(new ArrayList<MessageType>(markedAsDeleted.values()));
 	}
 
 	private void sendError() throws IOException {
@@ -213,14 +221,17 @@ public class Pop3Server extends Pop3Component {
 	}
 
 	private boolean isMessageMarkedForDeletion(Integer messageNumber) {
-		return markedAsDeleted.contains(messageNumber);
+		return markedAsDeleted.containsKey(messageNumber);
 	}
 
 	private boolean markMessageForDeletion(Integer messageNumber) {
 		if (isMessageMarkedForDeletion(messageNumber)) {
 			return false;
+		} else if (messageNumber > messages.size() || messageNumber < 1) {
+			return false;
 		} else {
-			return markedAsDeleted.add(messageNumber);
+			markedAsDeleted.put(messageNumber, messages.get(messageNumber - 1));
+			return true;
 		}
 	}
 

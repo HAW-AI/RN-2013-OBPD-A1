@@ -95,23 +95,50 @@ public class DBUtils {
 		saveAccount(account);
 	}
 
-	public static boolean removeMessagesMarkedForDeletion(AccountType account,
-			Set<Integer> messagesMarkedForDeletion)
+	public static boolean removeMessagesMarkedForDeletion(
+			List<MessageType> messagesMarkedForDeletion)
 			throws FileNotFoundException, JAXBException {
 		boolean result = true;
-		MessagesType messages = new MessagesType();
-		for (MessageType message : account.getMessages().getMessage()) {
-			if (!messagesMarkedForDeletion.contains(Pop3Server
-					.safeLongToInt(message.getId()))) {
-				messages.message.add(message);
-				// TODO if something goes wrong we should return false. right
-				// now
-				// this method always returns true.
+		for(MessageType message:messagesMarkedForDeletion){
+			removeMessageByProxyUid(message.getProxyuid());
+		}
+//		for (MessageType message : account.getMessages().getMessage()) {
+//			if (!messagesMarkedForDeletion.contains(Pop3Server
+//					.safeLongToInt(message.getId()))) {
+//				messages.message.add(message);
+//				// TODO if something goes wrong we should return false. right
+//				// now
+//				// this method always returns true.
+//			}
+//		}
+//		account.messages = messages;
+//		saveAccount(account);
+		return result;
+	}
+	
+	private static void removeMessageByProxyUid(String proxyUid) throws JAXBException, FileNotFoundException{
+		JAXBContext context = JAXBContext.newInstance(JAXBCONTEXT);
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+		Database db= (Database) unmarshaller.unmarshal(new File(DATABASE_PATH));
+		List<AccountType> accounts=db.getAccount();
+		for(AccountType account:accounts){
+			MessageType message=getMessageByProxyUid(account,proxyUid);
+			if(message!=null){
+				account.getMessages().getMessage().remove(message);
 			}
 		}
-		account.messages = messages;
-		saveAccount(account);
-		return result;
+		Marshaller marshaller = context.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(
+				true));
+		marshaller.marshal(db, new FileOutputStream(DATABASE_PATH));
+	}
+	
+	private static MessageType getMessageByProxyUid(AccountType account,String proxyUid){
+		for(MessageType message:account.getMessages().getMessage()){
+			if(proxyUid.equals(message.getProxyuid()))
+				return message;
+		}
+		return null;
 	}
 
 	/**

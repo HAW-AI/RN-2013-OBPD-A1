@@ -3,6 +3,7 @@ package de.haw_hamburg.db;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -40,5 +41,15 @@ public class DBUtilsTest {
 			assertNotEquals(null, messages.get(message.getProxyuid()));
 		}
 	}
+	
+	@Test
+	public void testRemoveMarkedAsDeleted() throws JAXBException, FileNotFoundException{
+		assertEquals(3,DBUtils.getAllMessages().size());
+		MessageType message1=DBUtils.getAllMessages().get(0);
+		MessageType message2=DBUtils.getAllMessages().get(2);
+		DBUtils.removeMessagesMarkedForDeletion(Arrays.asList(message1,message2));
+		assertEquals(1,DBUtils.getAllMessages().size());
+	}
+		
 
 }
