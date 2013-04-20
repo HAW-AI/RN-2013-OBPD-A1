@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -52,11 +53,22 @@ public class Pop3Server extends Pop3Component {
 		this.markedAsDeleted = new HashMap<Integer, MessageType>();
 	}
 
+
 	public Pop3Server create(Socket socket) throws IOException, JAXBException {
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
 		return new Pop3Server(in, out, DBUtils.getAllMessages());
+
+	}
+	
+	public static Pop3Server create() throws IOException, JAXBException {
+		ServerSocket socket = new ServerSocket(11000);
+		Socket clientSocket = socket.accept();
+		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				clientSocket.getInputStream()));
+		return new Pop3Server(in, out,DBUtils.getAllMessages());
 	}
 
 	public void run() {

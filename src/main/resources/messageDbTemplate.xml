@@ -3,7 +3,7 @@
 	<account>
 		<name>waelc</name>
 		<password>soooosecret</password>
-		<pop3server>da@localhost.com</pop3server>
+		<pop3server>localhost</pop3server>
 		<pop3port>11000</pop3port>
 		<messages></messages>
 	</account>
