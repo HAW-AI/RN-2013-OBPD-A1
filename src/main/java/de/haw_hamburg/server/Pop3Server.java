@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.text.StyledEditorKit.ForegroundAction;
@@ -95,7 +96,19 @@ public class Pop3Server extends Pop3Component {
 			}
 		} else if (request.isUidl()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			// TODO
+			List<MessageType> messages = DBUtils.getAllMessages();
+			if (request instanceof SimpleUidlRequest) {
+				sendOk();
+				//unique-id listing follows
+				for (MessageType message : messages) {
+					println("" + message.getId() + "" + message.getUid());
+				}
+				// TODO send termination crlf.crlf
+			} else {
+				int indexOfMessage = messages.indexOf(Integer.parseInt(request.param()));
+				MessageType message = messages.get(indexOfMessage);
+				sendOk(OkReply.okReply("" + message.getId() + "" + message.getUid()));
+			}
 			// differentiate between simple and complex somehow
 		} else if (request.isQuit()) {
 			ensureCorrectState(Pop3State.AUTHORIZATION, Pop3State.TRANSACTION);
@@ -114,14 +127,13 @@ public class Pop3Server extends Pop3Component {
 			disconnect();
 		} else if (request.isList()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			sendOk();
 			if (request instanceof SimpleListRequest) {
+				sendOk();
 				for (MessageType message : account.getMessages().getMessage()) {
 					if (!isMessageMarkedForDeletion(safeLongToInt(message
 							.getId()))) {
 						println(listMessageLine(message));
 					}
-
 				}
 			} else {
 				MessageType requestedMessage = null;
@@ -152,10 +164,18 @@ public class Pop3Server extends Pop3Component {
 			sendOk();
 		} else if (request.isRetrieve()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
-			// TODO
-			// send ok
-			// send message
-			// TODO send termination crlf.crlf
+			List<MessageType> messages = DBUtils.getAllMessages();
+			int indexOfMessageInMessagesList = messages.indexOf(Integer.parseInt(request.param()));
+			if (messages.size() >= indexOfMessageInMessagesList + 1) {
+				MessageType message = messages
+						.get(indexOfMessageInMessagesList);
+				sendOk(OkReply.okReply("" + message.getId() + ""
+						+ message.getContentLengthInBytes() + "octets"));
+				println(message.getContent());
+				// TODO send termination crlf.crlf
+			} else {
+				sendError("no such message");
+			}
 		} else if (request.isStat()) {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			// send ok with number of messages in maildrop and number of bytes
