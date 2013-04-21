@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,12 +14,14 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
-import de.haw_hamburg.client.Request;
-import de.haw_hamburg.client.Requests;
 import de.haw_hamburg.common.Pop3Component;
 import de.haw_hamburg.common.Pop3State;
 import de.haw_hamburg.db.DBUtils;
 import de.haw_hamburg.db.MessageType;
+import de.haw_hamburg.replies.ErrorReply;
+import de.haw_hamburg.replies.OkReply;
+import de.haw_hamburg.requests.Request;
+import de.haw_hamburg.requests.Requests;
 
 public class Pop3Server extends Pop3Component {
 	private Map<Integer, MessageType> markedAsDeleted;
@@ -46,15 +47,6 @@ public class Pop3Server extends Pop3Component {
 				socket.getInputStream()));
 		return new Pop3Server(in, out, DBUtils.getAllMessages());
 
-	}
-
-	public static Pop3Server create() throws IOException, JAXBException {
-		ServerSocket socket = new ServerSocket(11000);
-		Socket clientSocket = socket.accept();
-		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				clientSocket.getInputStream()));
-		return new Pop3Server(in, out, DBUtils.getAllMessages());
 	}
 
 	public void run() {
@@ -149,12 +141,6 @@ public class Pop3Server extends Pop3Component {
 			ensureCorrectState(Pop3State.TRANSACTION);
 			if (!request.hasParam()) {
 				sendOk();
-				// TODO: Introduce marked as deletion
-				// if
-				// (!isMessageMarkedForDeletion(safeLongToInt(message.getId())))
-				// {
-				// println(listMessageLine(message));
-				// }
 				for (int i = 0; i < messages.size(); i++) {
 					if (!isMessageMarkedForDeletion(i + 1))
 						println(i + 1 + " "
@@ -221,6 +207,8 @@ public class Pop3Server extends Pop3Component {
 						markedAsDeleted.values()));
 	}
 
+	
+	@SuppressWarnings("unused")
 	private void sendError() throws IOException {
 		println(ErrorReply.errorReply());
 	}
@@ -258,10 +246,6 @@ public class Pop3Server extends Pop3Component {
 
 	private void disconnect() {
 		interrupt();
-	}
-
-	private String listMessageLine(MessageType message) {
-		return "" + message.getId() + " " + message.getContentLengthInBytes();
 	}
 
 	public static int safeLongToInt(long l) {

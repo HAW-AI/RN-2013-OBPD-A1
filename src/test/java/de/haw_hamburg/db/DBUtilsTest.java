@@ -38,7 +38,7 @@ public class DBUtilsTest {
 
 	@Test
 	public void testGetAllMessagesUidl() throws JAXBException {
-		Map<String, MessageType> messages = DBUtils.getAllMessagesUidl();
+		Map<String, MessageType> messages = DBUtils.getAllMessagesProxyUidl();
 		for (MessageType message : DBUtils.getAllMessages()) {
 			assertTrue(messages.containsKey(message.getProxyuid()));
 			assertNotEquals(null, messages.get(message.getProxyuid()));

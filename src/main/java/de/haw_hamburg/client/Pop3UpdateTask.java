@@ -1,6 +1,7 @@
 package de.haw_hamburg.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +19,15 @@ public class Pop3UpdateTask extends TimerTask {
 
 	private static Logger LOG=Logger.getLogger(Pop3UpdateTask.class.getName());
 	private AccountType account;
+	private boolean withUidl;
 	
-	private Pop3UpdateTask(AccountType account){
+	private Pop3UpdateTask(AccountType account, boolean withUidl){
 		this.account=account;
+		this.withUidl=withUidl;
 	}
 	
-	public static Pop3UpdateTask create(AccountType account){
-		return new Pop3UpdateTask(account);
+	public static Pop3UpdateTask create(AccountType account, boolean withUidl){
+		return new Pop3UpdateTask(account, withUidl);
 	}
 	
 	@Override
@@ -35,20 +38,20 @@ public class Pop3UpdateTask extends TimerTask {
 			client.list();
 			Map<Integer,Integer> messageInfo=client.getMessageInfo();
 			if(!messageInfo.isEmpty()){
-				for(int messageNumber:messageInfo.keySet()){
+				Collection<Integer> messagesToDownload=null;
+				if(withUidl){
+					client.uidl();
+					Map<Integer,String> uidl=client.getUidl();
+					messagesToDownload=calcMessagesToDownloadFromUidl(uidl);
+				}
+				else{
+					messagesToDownload=messageInfo.keySet();
+				}
+				for(int messageNumber:messagesToDownload){
 					client.retr(messageNumber);
 					client.dele(messageNumber);
 				}
 			}
-//			if(!messageInfo.isEmpty()){
-//				client.uidl();
-//				Map<Integer,String> uidl=client.getUidl();
-//				List<Integer> messagesToDownload=calcMessagesToDownloadFromUidl(uidl);
-//				for(int messageNumber:messagesToDownload){
-//					client.retr(messageNumber);
-//					client.dele(messageNumber);
-//				}
-//			}
 			client.quit();
 	}
 

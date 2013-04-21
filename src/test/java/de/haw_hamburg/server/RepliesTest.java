@@ -4,6 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import de.haw_hamburg.replies.ErrorReply;
+import de.haw_hamburg.replies.OkReply;
+import de.haw_hamburg.replies.Replies;
+
 public class RepliesTest {
 
 	@Test

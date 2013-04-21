@@ -1,4 +1,4 @@
-package de.haw_hamburg.server;
+package de.haw_hamburg.replies;
 
 // Marker Interface
 public interface Reply {

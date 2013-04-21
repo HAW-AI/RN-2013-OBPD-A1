@@ -1,17 +1,9 @@
 package de.haw_hamburg.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-//import java.nio.file.Files;
-//import java.nio.file.Paths;
-//import java.nio.file.StandardCopyOption;
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.xml.bind.JAXBException;
 
@@ -21,14 +13,15 @@ import org.junit.Test;
 
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
 import de.haw_hamburg.Pop3TestCommon;
 import de.haw_hamburg.common.Pop3State;
 import de.haw_hamburg.db.AccountType;
 import de.haw_hamburg.db.DBUtils;
-import de.haw_hamburg.db.ObjectFactory;
+//import java.nio.file.Files;
+//import java.nio.file.Paths;
+//import java.nio.file.StandardCopyOption;
 
 public class Pop3ClientTest {
 

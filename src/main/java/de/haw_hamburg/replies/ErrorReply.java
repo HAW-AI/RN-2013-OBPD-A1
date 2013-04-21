@@ -1,4 +1,4 @@
-package de.haw_hamburg.server;
+package de.haw_hamburg.replies;
 
 public class ErrorReply implements Reply {
 	String errorMessage = "";

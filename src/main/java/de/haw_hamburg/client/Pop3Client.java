@@ -18,9 +18,11 @@ import de.haw_hamburg.common.Pop3Component;
 import de.haw_hamburg.common.Pop3State;
 import de.haw_hamburg.db.AccountType;
 import de.haw_hamburg.db.DBUtils;
-import de.haw_hamburg.server.OkReply;
-import de.haw_hamburg.server.Replies;
-import de.haw_hamburg.server.Reply;
+import de.haw_hamburg.replies.OkReply;
+import de.haw_hamburg.replies.Replies;
+import de.haw_hamburg.replies.Reply;
+import de.haw_hamburg.requests.Request;
+import de.haw_hamburg.requests.Requests;
 
 public class Pop3Client extends Pop3Component {
 

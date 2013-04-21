@@ -1,4 +1,4 @@
-package de.haw_hamburg.client;
+package de.haw_hamburg.requests;
 
 public class Requests {
 
@@ -41,7 +41,6 @@ public class Requests {
 	}
 
 	public static String message(String message) {
-		// TODO: Single point has to be dealt with
 		return message;
 	}
 

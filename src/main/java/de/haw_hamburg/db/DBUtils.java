@@ -1,21 +1,18 @@
 package de.haw_hamburg.db;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
-import de.haw_hamburg.server.Pop3Server;
 
 public class DBUtils {
 
@@ -104,17 +101,6 @@ public class DBUtils {
 		for (MessageType message : messagesMarkedForDeletion) {
 			removeMessageByProxyUid(message.getProxyuid());
 		}
-		// for (MessageType message : account.getMessages().getMessage()) {
-		// if (!messagesMarkedForDeletion.contains(Pop3Server
-		// .safeLongToInt(message.getId()))) {
-		// messages.message.add(message);
-		// // TODO if something goes wrong we should return false. right
-		// // now
-		// // this method always returns true.
-		// }
-		// }
-		// account.messages = messages;
-		// saveAccount(account);
 		return result;
 	}
 
@@ -183,9 +169,8 @@ public class DBUtils {
 	 * @return map of proxy uid to message
 	 * @throws JAXBException
 	 * 
-	 *             TODO: Rename to getAllMessagesProxyUidl
 	 */
-	public static Map<String, MessageType> getAllMessagesUidl()
+	public static Map<String, MessageType> getAllMessagesProxyUidl()
 			throws JAXBException {
 		Map<String, MessageType> result = new HashMap<String, MessageType>();
 		for (MessageType message : getAllMessages()) {

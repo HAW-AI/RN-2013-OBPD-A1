@@ -1,10 +1,6 @@
 package de.haw_hamburg.server;
 
-import static org.junit.Assert.*;
-
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Properties;
+import static org.junit.Assert.assertEquals;
 
 import javax.mail.internet.MimeMessage;
 
@@ -51,8 +47,6 @@ public class Pop3ServerTest {
 
 	@Test
 	public void testHandleRequest() throws Exception {
-		String USER_NAME = "waelc";
-		String PASSWORD = "soooosecret";
 
 		// Greenmail running and our own proxy running.
 		Starter.main(null);

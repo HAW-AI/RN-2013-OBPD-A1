@@ -1,4 +1,4 @@
-package de.haw_hamburg.client;
+package de.haw_hamburg.requests;
 
 public class DeleteRequest extends AbstractRequestWithParam {
 

@@ -8,7 +8,7 @@ import java.util.HashSet;
 
 import org.omg.CORBA.Request;
 
-import de.haw_hamburg.server.Reply;
+import de.haw_hamburg.replies.Reply;
 
 public abstract class Pop3Component extends Thread {
 
