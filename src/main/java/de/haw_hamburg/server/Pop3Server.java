@@ -26,8 +26,8 @@ public class Pop3Server extends Pop3Component {
 	private Map<Integer, MessageType> markedAsDeleted;
 	private List<MessageType> messages;
 	private boolean correctUserName = false;
-	public static final String USER_NAME = "Ash";
-	public static final String PASSWORD = "EvilDeadReturns";
+	public static final String USER_NAME = "waelc";
+	public static final String PASSWORD = "soooosecret";
 	private static Logger LOG = Logger.getLogger(Pop3Server.class.getName());
 
 	private Pop3Server(BufferedReader in, PrintWriter out,

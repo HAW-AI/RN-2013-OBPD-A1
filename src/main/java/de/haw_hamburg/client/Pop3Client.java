@@ -47,7 +47,7 @@ public class Pop3Client extends Pop3Component {
 		return messageInfo;
 	}
 
-	protected void connect() {
+	public void connect() {
 		try {
 			socket = new Socket(account.getPop3Server(), account.getPop3Port());
 			state = Pop3State.CONNECTED;
@@ -72,7 +72,7 @@ public class Pop3Client extends Pop3Component {
 		out.close();
 	}
 
-	protected void login() {
+	public void login() {
 		ensureCorrectState(Pop3State.CONNECTED);
 		state = Pop3State.AUTHORIZATION;
 		user();
@@ -101,7 +101,7 @@ public class Pop3Client extends Pop3Component {
 		}
 	}
 
-	protected void quit() {
+	public void quit() {
 		ensureCorrectState(Pop3State.AUTHORIZATION, Pop3State.TRANSACTION);
 		try {
 			if (state == Pop3State.TRANSACTION) {
@@ -129,7 +129,7 @@ public class Pop3Client extends Pop3Component {
 		}
 	}
 
-	protected void list() {
+	public void list() {
 		ensureCorrectState(Pop3State.TRANSACTION);
 		try {
 			if (sendAndWaitForOk(Requests.list())) {
@@ -165,7 +165,7 @@ public class Pop3Client extends Pop3Component {
 		}
 	}
 
-	protected void retr(Integer messageNumber) {
+	public void retr(Integer messageNumber) {
 		ensureCorrectState(Pop3State.TRANSACTION);
 		ensureMessageNotMarkedAsDeleted(messageNumber);
 		try {

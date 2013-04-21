@@ -4,7 +4,7 @@
 		<name>waelc</name>
 		<password>soooosecret</password>
 		<pop3server>localhost</pop3server>
-		<pop3port>11000</pop3port>
+		<pop3port>3110</pop3port>
 		<messages></messages>
 	</account>
 </database>

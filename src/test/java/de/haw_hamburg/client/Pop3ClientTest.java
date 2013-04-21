@@ -24,6 +24,7 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
+import de.haw_hamburg.Pop3TestCommon;
 import de.haw_hamburg.common.Pop3State;
 import de.haw_hamburg.db.AccountType;
 import de.haw_hamburg.db.DBUtils;
@@ -46,9 +47,9 @@ public class Pop3ClientTest {
 
 		// use random content to avoid potential residual lingering problems
 
-		MimeMessage message = construct("wael@localhost.com",
+		MimeMessage message = Pop3TestCommon.construct("wael@localhost.com",
 				"from@example.com");
-		MimeMessage message2 = construct("wael@localhost.com",
+		MimeMessage message2 = Pop3TestCommon.construct("wael@localhost.com",
 				"from@example.com");
 		GreenMailUser user = greenMail.setUser("wael@localhost.com", "waelc",
 				"soooosecret");
@@ -254,31 +255,5 @@ public class Pop3ClientTest {
 		}
 	}
 
-	private MimeMessage construct(String to, String from) {
-		// Assuming you are sending email from localhost
-		// String host = "localhost";
-
-		// Get system properties
-		Properties properties = System.getProperties();
-
-		// Setup mail server
-		// properties.setProperty("mail.smtp.host", host);
-
-		// Get the default Session object.
-		Session session = Session.getDefaultInstance(properties);
-
-		MimeMessage message = new MimeMessage(session);
-		try {
-			message.setFrom(new InternetAddress(from));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
-					to));
-			message.setSubject("This is the Subject Line!");
-			message.setContent("This is actual message", "text/plain");
-		} catch (MessagingException mex) {
-			mex.printStackTrace();
-		}
-
-		return message;
-	}
 
 }
