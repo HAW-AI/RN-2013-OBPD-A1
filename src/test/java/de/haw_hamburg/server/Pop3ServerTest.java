@@ -59,7 +59,7 @@ public class Pop3ServerTest {
 
 		AccountType account = DBUtils.createAccountType("waelc", "soooosecret",
 				"localhost", 11000);
-		Pop3Client client = Pop3Client.create(account);
+		Pop3Client client = Pop3Client.create(account,0);
 		client.connect();
 		assertEquals(Pop3State.CONNECTED, client.getPop3State());
 		client.login();
@@ -69,7 +69,7 @@ public class Pop3ServerTest {
 		client.quit();
 		assertEquals(1, DBUtils.getAccountForNameAndServer("waelc","localhost").getMessages()
 				.getMessage().size());
-		client = Pop3Client.create(account);
+		client = Pop3Client.create(account,1);
 		client.connect();
 		assertEquals(Pop3State.CONNECTED, client.getPop3State());
 		client.login();

@@ -20,19 +20,21 @@ public class Pop3UpdateTask extends TimerTask {
 	private static Logger LOG=Logger.getLogger(Pop3UpdateTask.class.getName());
 	private AccountType account;
 	private boolean withUidl;
+	private int number;
 	
-	private Pop3UpdateTask(AccountType account, boolean withUidl){
+	private Pop3UpdateTask(AccountType account, int number, boolean withUidl){
 		this.account=account;
 		this.withUidl=withUidl;
+		this.number=number;
 	}
 	
-	public static Pop3UpdateTask create(AccountType account, boolean withUidl){
-		return new Pop3UpdateTask(account, withUidl);
+	public static Pop3UpdateTask create(AccountType account, int number, boolean withUidl){
+		return new Pop3UpdateTask(account, number, withUidl);
 	}
 	
 	@Override
 	public void run() {
-			Pop3Client client=Pop3Client.create(account);
+			Pop3Client client=Pop3Client.create(account,number);
 			client.connect();
 			client.login();
 			client.list();

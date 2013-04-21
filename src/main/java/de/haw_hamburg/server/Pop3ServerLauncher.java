@@ -11,6 +11,7 @@ public class Pop3ServerLauncher extends Thread {
 
 	private final int port;
 	private Logger LOG=Logger.getLogger(Pop3ServerLauncher.class.getName());
+	private int serverNumber=0;
 	
 	
 	public Pop3ServerLauncher(int port) {
@@ -26,7 +27,8 @@ public class Pop3ServerLauncher extends Thread {
 				try {
 					Socket socket = serverSocket.accept();
 					LOG.info("Incoming connection");
-					Pop3Server.create(socket).start();
+					Pop3Server.create(socket,serverNumber).start();
+					serverNumber+=1;
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (JAXBException e) {

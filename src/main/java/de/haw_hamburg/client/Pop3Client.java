@@ -28,22 +28,22 @@ public class Pop3Client extends Pop3Component {
 
 	private AccountType account;
 	private Socket socket;
-	private int number;
-
+	
 	private Integer numberOfMessagesInMaildrop;
 	private Integer sizeOfMaildropInOctets;
 
 	private Map<Integer, Integer> messageInfo = new HashMap<Integer, Integer>();
 	private Map<Integer, String> uidl = new HashMap<Integer, String>();
 	private Set<Integer> markedAsDeleted = new HashSet<Integer>();
-	private Logger LOG = Logger.getLogger(Pop3Client.class.getName() + " " + number);
+	private Logger LOG;
 
-	private Pop3Client(AccountType account) {
+	private Pop3Client(AccountType account,int number) {
 		this.account = account;
+		LOG=Logger.getLogger(Pop3Client.class.getName() + " " + number);
 	}
 
-	public static Pop3Client create(AccountType account) {
-		return new Pop3Client(account);
+	public static Pop3Client create(AccountType account,int number) {
+		return new Pop3Client(account,number);
 	}
 
 	public Map<Integer, Integer> getMessageInfo() {

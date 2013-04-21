@@ -24,29 +24,31 @@ import de.haw_hamburg.requests.Request;
 import de.haw_hamburg.requests.Requests;
 
 public class Pop3Server extends Pop3Component {
+	
 	private int number;
 	private Map<Integer, MessageType> markedAsDeleted;
 	private List<MessageType> messages;
 	private boolean correctUserName = false;
 	public static final String USER_NAME = "waelc";
 	public static final String PASSWORD = "soooosecret";
-	private Logger LOG = Logger.getLogger(Pop3Server.class.getName() + " " + number);
+	private Logger LOG;
 
 	private Pop3Server(BufferedReader in, PrintWriter out,
-			List<MessageType> messages) {
+			List<MessageType> messages,int number) {
 		this.in = in;
 		this.out = out;
 		this.state = Pop3State.CONNECTED;
 		this.messages = messages;
 		this.markedAsDeleted = new HashMap<Integer, MessageType>();
+		LOG=Logger.getLogger(Pop3Server.class.getName() + " " + number);
 	}
 
-	public static Pop3Server create(Socket socket) throws IOException,
+	public static Pop3Server create(Socket socket,int number) throws IOException,
 			JAXBException {
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
-		return new Pop3Server(in, out, DBUtils.getAllMessages());
+		return new Pop3Server(in, out, DBUtils.getAllMessages(),number);
 
 	}
 

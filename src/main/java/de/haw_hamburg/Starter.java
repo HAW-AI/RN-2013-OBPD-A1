@@ -43,8 +43,10 @@ public class Starter {
 		// Start client tasks
 		Timer timer=new Timer();
 		List<AccountType> accounts=DBUtils.getAccounts();
+		int i=0;
 		for(AccountType account:accounts){
-			timer.schedule(Pop3UpdateTask.create(account,false), 0, 30000);
+			timer.schedule(Pop3UpdateTask.create(account,i,false), 0, 30000);
+			i+=1;
 		}
 		
 		Pop3ServerLauncher launcher = new Pop3ServerLauncher(11000);
