@@ -68,7 +68,8 @@ public class Pop3ServerTest {
 		assertEquals(Pop3State.CONNECTED, client.getPop3State());
 		client.login();
 		assertEquals(Pop3State.TRANSACTION, client.getPop3State());
-		client.retr(1);
+		client.list();
+		client.retr(2);
 		client.quit();
 		assertEquals(1, DBUtils.getAccountForName("waelc").getMessages()
 				.getMessage().size());
@@ -77,7 +78,8 @@ public class Pop3ServerTest {
 		assertEquals(Pop3State.CONNECTED, client.getPop3State());
 		client.login();
 		assertEquals(Pop3State.TRANSACTION, client.getPop3State());
-		client.retr(2);
+		client.list();
+		client.retr(1);
 		client.quit();
 		assertEquals(2, DBUtils.getAccountForName("waelc").getMessages()
 				.getMessage().size());
