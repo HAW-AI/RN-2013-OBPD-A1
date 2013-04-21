@@ -58,7 +58,7 @@ public class Pop3UpdateTask extends TimerTask {
 	private List<Integer> calcMessagesToDownloadFromUidl(Map<Integer,String> uidl) {
 		List<Integer> result=new ArrayList<Integer>();
 		try {
-		AccountType currentAccount=DBUtils.getAccountForName(account.getName());
+		AccountType currentAccount=DBUtils.getAccountForNameAndServer(account.getName(),account.getPop3Server());
 		Set<String> uidsOfDownloadedMessages=getUidlsFromAccount(currentAccount);
 		for(Map.Entry<Integer, String> entry:uidl.entrySet()){
 			if(!uidsOfDownloadedMessages.contains(entry.getValue())){

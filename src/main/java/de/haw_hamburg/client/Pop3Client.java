@@ -28,6 +28,7 @@ public class Pop3Client extends Pop3Component {
 
 	private AccountType account;
 	private Socket socket;
+	private int number;
 
 	private Integer numberOfMessagesInMaildrop;
 	private Integer sizeOfMaildropInOctets;
@@ -35,7 +36,7 @@ public class Pop3Client extends Pop3Component {
 	private Map<Integer, Integer> messageInfo = new HashMap<Integer, Integer>();
 	private Map<Integer, String> uidl = new HashMap<Integer, String>();
 	private Set<Integer> markedAsDeleted = new HashSet<Integer>();
-	private Logger LOG = Logger.getLogger(Pop3Client.class.getName());
+	private Logger LOG = Logger.getLogger(Pop3Client.class.getName() + " " + number);
 
 	private Pop3Client(AccountType account) {
 		this.account = account;
@@ -291,6 +292,7 @@ public class Pop3Client extends Pop3Component {
 		String response = readLine();
 		while (!response.trim().equals(".")) {
 			message.append(response);
+			message.append("\n");
 			response = readLine();
 		}
 		DBUtils.saveMessage(account, message.toString(), messageNumber, uid);
@@ -303,12 +305,12 @@ public class Pop3Client extends Pop3Component {
 	}
 
 	private boolean sendAndWaitForOk(Request command) throws IOException {
-		println(command.toString());
+		println(command);
 		return isOk();
 	}
 
 	private Reply sendAndWaitForOkAndParams(Request command) throws IOException {
-		println(command.toString());
+		println(command);
 		return OkWithParams();
 	}
 
@@ -345,5 +347,10 @@ public class Pop3Client extends Pop3Component {
 
 	public Map<Integer, String> getUidl() {
 		return uidl;
+	}
+	
+	@Override
+	protected Logger getLog(){
+		return LOG;
 	}
 }

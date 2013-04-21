@@ -24,12 +24,13 @@ import de.haw_hamburg.requests.Request;
 import de.haw_hamburg.requests.Requests;
 
 public class Pop3Server extends Pop3Component {
+	private int number;
 	private Map<Integer, MessageType> markedAsDeleted;
 	private List<MessageType> messages;
 	private boolean correctUserName = false;
 	public static final String USER_NAME = "waelc";
 	public static final String PASSWORD = "soooosecret";
-	private static Logger LOG = Logger.getLogger(Pop3Server.class.getName());
+	private Logger LOG = Logger.getLogger(Pop3Server.class.getName() + " " + number);
 
 	private Pop3Server(BufferedReader in, PrintWriter out,
 			List<MessageType> messages) {
@@ -254,6 +255,11 @@ public class Pop3Server extends Pop3Component {
 					+ " cannot be cast to int without changing its value.");
 		}
 		return (int) l;
+	}
+	
+	@Override
+	protected Logger getLog(){
+		return LOG;
 	}
 
 }

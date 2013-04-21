@@ -34,11 +34,11 @@ public class DBUtils {
 		}
 	}
 
-	public static AccountType getAccountForName(String name)
+	public static AccountType getAccountForNameAndServer(String name, String server)
 			throws JAXBException {
 		AccountType result = null;
 		for (AccountType account : getAccounts()) {
-			if (account.getName().equals(name)) {
+			if (account.getName().equals(name) && account.getPop3Server().equals(server)) {
 				result = account;
 				break;
 			}
@@ -83,6 +83,7 @@ public class DBUtils {
 
 	public static void saveMessage(AccountType account, String content, int id,
 			String uid) throws FileNotFoundException, JAXBException {
+		AccountType currentAccount=getAccountForNameAndServer(account.getName(),account.getPop3Server());
 		MessageType newMessage = new MessageType();
 		newMessage.setId(id);
 		newMessage.setContent(content);
@@ -90,8 +91,8 @@ public class DBUtils {
 			newMessage.setUid(uid);
 		}
 		newMessage.setProxyuid(UUID.randomUUID().toString());
-		account.getMessages().getMessage().add(newMessage);
-		saveAccount(account);
+		currentAccount.getMessages().getMessage().add(newMessage);
+		saveAccount(currentAccount);
 	}
 
 	public static boolean removeMessagesMarkedForDeletion(
@@ -156,8 +157,11 @@ public class DBUtils {
 	 * @throws JAXBException
 	 */
 	public static List<MessageType> getAllMessages() throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(JAXBCONTEXT);
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+		Database db=(Database) unmarshaller.unmarshal(new File(DATABASE_PATH));
 		List<MessageType> result = new ArrayList<MessageType>();
-		for (AccountType account : getAccounts()) {
+		for (AccountType account : db.getAccount()) {
 			result.addAll(account.getMessages().getMessage());
 		}
 		return result;

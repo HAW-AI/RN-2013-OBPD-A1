@@ -23,6 +23,7 @@ public class Starter {
 					.getPath());
 			LogManager.getLogManager().readConfiguration(configFile);
 		} catch (IOException ex) {
+			System.out.println("Exception: "+ex.getMessage());
 			System.out.println("WARNING: Could not open configuration file");
 			System.out
 					.println("WARNING: Logging not configured (console output only)");
@@ -35,7 +36,7 @@ public class Starter {
 	 */
 	public static void main(String[] args) throws JAXBException {
 
-		initializeLogging();
+		//initializeLogging();
 		Logger LOG = Logger.getLogger(Starter.class.getName());
 		LOG.info("System started");
 

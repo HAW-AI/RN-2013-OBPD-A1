@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
-import org.omg.CORBA.Request;
+import de.haw_hamburg.requests.*;
 
 import de.haw_hamburg.replies.Reply;
 
@@ -17,6 +18,7 @@ public abstract class Pop3Component extends Thread {
 	protected Pop3State state = Pop3State.IDLE;
 	protected static final String CRLF="\r\n";
 	protected static final String TERMINATION=".";
+	protected abstract Logger getLog();
 
 	public Pop3State getPop3State() {
 		return state;
@@ -31,22 +33,23 @@ public abstract class Pop3Component extends Thread {
 
 	protected String readLine() throws IOException {
 		String result=in.readLine();
-		System.out.println("Received: "+result);
+		getLog().info("Received: "+result);
 		return result;
 	}
 
 	protected void println(String line) throws IOException {
-		System.out.println("Sending: "+line);
+		getLog().info("Sending reply: "+line);
 		out.println(line);
 	}
-
+	
 	protected void println(Request request) throws IOException {
-		System.out.println("C: "+request);
+		getLog().info("Sending reply: "+request);
 		out.println(request.toString());
 	}
 
 	protected void println(Reply reply) throws IOException {
-		System.out.println("S: "+reply);
+		getLog().info("Sending reply: "+reply);
 		out.println(reply.toString());
 	}
+	
 }
