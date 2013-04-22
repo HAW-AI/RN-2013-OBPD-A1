@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project rn-2013-a1">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/home/stud6/aba219/workspace/RN-2013-OBPD-A1/target/rn_a1.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="de.haw_hamburg.Starter"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/home/stud6/aba219/workspace/RN-2013-OBPD-A1/target/classes"/>
+        </jar>
+    </target>
+</project>
