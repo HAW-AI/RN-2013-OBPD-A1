@@ -71,7 +71,7 @@ public class DBUtils {
 		Database db = getDatabase();
 		List<AccountType> list = db.getAccount();
 		for (AccountType elem : list) {
-			if (elem.getName().equals(account.getName())) {
+			if (elem.getName().equals(account.getName()) && elem.getPop3Server().equals(account.getPop3Server())) {
 				elem.setMessages(account.getMessages());
 			}
 		}

@@ -43,7 +43,7 @@ public abstract class Pop3Component extends Thread {
 	}
 	
 	protected void println(Request request) throws IOException {
-		getLog().info("Sending reply: "+request);
+		getLog().info("Sending request: "+request);
 		out.println(request.toString());
 	}
 

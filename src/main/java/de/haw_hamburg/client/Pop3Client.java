@@ -291,6 +291,9 @@ public class Pop3Client extends Pop3Component {
 		StringBuilder message = new StringBuilder("");
 		String response = readLine();
 		while (!response.trim().equals(".")) {
+			if(response.startsWith("..")){
+				response=response.substring(1);
+			}
 			message.append(response);
 			message.append("\n");
 			response = readLine();

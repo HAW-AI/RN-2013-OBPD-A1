@@ -25,16 +25,17 @@ import de.haw_hamburg.requests.Requests;
 
 public class Pop3Server extends Pop3Component {
 	
-	private int number;
 	private Map<Integer, MessageType> markedAsDeleted;
 	private List<MessageType> messages;
 	private boolean correctUserName = false;
 	public static final String USER_NAME = "waelc";
 	public static final String PASSWORD = "soooosecret";
 	private Logger LOG;
+	private Socket socket;
 
-	private Pop3Server(BufferedReader in, PrintWriter out,
+	private Pop3Server(Socket socket,BufferedReader in, PrintWriter out,
 			List<MessageType> messages,int number) {
+		this.socket=socket;
 		this.in = in;
 		this.out = out;
 		this.state = Pop3State.CONNECTED;
@@ -48,7 +49,7 @@ public class Pop3Server extends Pop3Component {
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
-		return new Pop3Server(in, out, DBUtils.getAllMessages(),number);
+		return new Pop3Server(socket,in, out, DBUtils.getAllMessages(),number);
 
 	}
 
@@ -71,6 +72,13 @@ public class Pop3Server extends Pop3Component {
 			LOG.info("Connection terminated");
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		try {
+			in.close();
+			out.close();
+			socket.close();
+		} catch (IOException e) {
+			LOG.warning("Failed to close socket:\n"+e.getMessage());
 		}
 	}
 
@@ -182,7 +190,7 @@ public class Pop3Server extends Pop3Component {
 						.get(indexOfMessageInMessagesList);
 				sendOk(OkReply.okReply("" + message.getId() + " "
 						+ message.getContentLengthInBytes() + "octets"));
-				println(message.getContent());
+				println(message.getContent().replaceAll("\n\\.", "\n.."));
 				println(TERMINATION);
 			} else {
 				sendError("no such message");
